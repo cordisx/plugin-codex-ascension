@@ -81,6 +81,21 @@ npm run check
 npm run dev
 ```
 
+### Plugin configuration
+
+CordisX renders these settings from the plugin's structured schema. All three
+options default to enabled and apply after the plugin restarts:
+
+| Option | What it controls |
+| --- | --- |
+| Replace reasoning slider | Applies the Imperium presentation to the native reasoning-intensity control. |
+| Show backdrop portrait | Shows the stage portrait in the lower-right session background. |
+| Enable backdrop effects | Shows the stage glow and architectural motion independently of the portrait. |
+
+The switches are independent. Disabling both backdrop options removes the
+`session.backdrop` contribution entirely; disabling the slider option leaves
+the native CordisX control unchanged.
+
 ## License
 
 The source code is available under the [MIT License](./LICENSE).

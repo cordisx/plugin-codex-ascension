@@ -307,7 +307,10 @@ export default function Home() {
     }
     return markers;
   }, []), [petitionHistory]);
-  const historicPetitionTotal = useMemo(() => petitionHistory.reduce((sum, day) => sum + day.count, 0), [petitionHistory]);
+  const allTimePetitionTotal = useMemo(
+    () => petitionCount + resetHistory.reduce((sum, event) => sum + event.petitions, 0),
+    [petitionCount, resetHistory],
+  );
   const latestRecordedDay = [...petitionHistory].reverse().find((day) => !day.isFuture) ?? petitionHistory[petitionHistory.length - 1];
   const selectedDay = petitionHistory.find((day) => day.date === selectedDate)
     ?? petitionHistory.find((day) => day.date === resetHistory[resetHistory.length - 1]?.date)
@@ -507,13 +510,14 @@ export default function Home() {
           <button
             aria-controls="petition-ledger"
             aria-expanded={ledgerOpen}
-            aria-label={`Open petition and reset history. ${petitionCount.toLocaleString("en-US")} petitions awaiting reset.`}
+            aria-label={`Open petition and reset history. ${petitionCount.toLocaleString("en-US")} petitions awaiting reset, ${allTimePetitionTotal.toLocaleString("en-US")} petitions all time.`}
             className="petition-trigger"
             onClick={() => setLedgerOpen(true)}
             type="button"
           >
             <span>RESET PETITIONS</span>
             <strong>{petitionCount.toLocaleString("en-US")}</strong>
+            <b className="historic-petitions">ALL TIME · {allTimePetitionTotal.toLocaleString("en-US")}</b>
             <small><i /> {ledgerStatus === "live" ? `LAST RESET · ${lastResetElapsed}` : ledgerStatus === "offline" ? "RECONNECTING" : "CONNECTING"}</small>
           </button>
         </div>
@@ -580,7 +584,7 @@ export default function Home() {
 
           <div className="ledger-stats" aria-label="Petition summary">
             <div><span>AWAITING RESET</span><strong>{petitionCount.toLocaleString("en-US")}</strong><small>ROUND {roman(ledger.currentRound)} · {ledgerStatus === "live" ? "LIVE" : "SYNCING"}</small></div>
-            <div><span>PAST 52 WEEKS</span><strong>{historicPetitionTotal.toLocaleString("en-US")}</strong><small>RECORDED PETITIONS</small></div>
+            <div><span>ALL-TIME PETITIONS</span><strong>{allTimePetitionTotal.toLocaleString("en-US")}</strong><small>ACROSS ALL ROUNDS</small></div>
             <div><span>RESETS GRANTED</span><strong>{resetHistory.length}</strong><small>{latestReset ? `LAST RESET ${lastResetElapsed}` : "BY IMPERIAL DECREE"}</small></div>
           </div>
 

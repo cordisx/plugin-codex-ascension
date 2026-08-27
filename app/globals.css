@@ -82,6 +82,7 @@ h1 span { display:block; margin-left:.65em; font-family:var(--label-font); font-
 }
 .petition-trigger > span { display:block; font:8px/1.2 var(--label-font); letter-spacing:.17em; color:rgb(236 218 183 / .62); }
 .petition-trigger > strong { display:block; margin-top:4px; font-family:var(--display-font); font-size:25px; font-weight:var(--display-weight); line-height:1; letter-spacing:-.025em; color:#f2eadb; }
+.historic-petitions { display:block; margin-top:5px; font:600 7px/1 var(--label-font); letter-spacing:.15em; color:rgb(225 195 134 / .68); }
 .petition-trigger small { display:flex; align-items:center; justify-content:flex-end; gap:5px; margin-top:5px; font:7px/1 var(--label-font); letter-spacing:.15em; color:#cda857; }
 .petition-trigger small i { width:5px; height:5px; border-radius:50%; background:#d9ad48; box-shadow:0 0 8px rgb(224 177 66 / .72); animation:ledger-live 1.9s ease-in-out infinite; }
 .petition-trigger:hover { border-color:#e4bd68; filter:drop-shadow(0 0 8px rgb(214 171 76 / .18)); transform:translateY(-1px); }

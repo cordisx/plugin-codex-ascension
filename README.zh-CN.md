@@ -64,13 +64,7 @@ npm run build
 持久账本使用 `.openai/hosting.json` 中声明的 `DB` D1 binding。生产环境执行
 Reset 还需要托管的 `RESET_ADMIN_TOKEN` secret，请勿把它提交到仓库。
 
-## CordisX 插件状态
-
-这个仓库目前交付的是公开站点。面向 Codex 思考强度区域的 CordisX 体验插件
-已经列入后续计划，但尚未实现或分发。插件界面会遵守 CordisX 的 Host-owned
-渲染与样式边界，而不是把站点 CSS 直接注入 Codex。
-
-## 许可证与项目声明
+## 许可证与声明
 
 源代码采用 [MIT License](./LICENSE)。
 

@@ -13,6 +13,7 @@ const stages = [
 
 type ResetEvent = {
   date: string;
+  resetAt: string;
   petitions: number;
   round: string;
 };
@@ -59,6 +60,19 @@ function createPetitionHistory(days: LedgerPayload["days"], resets: ResetEvent[]
 
 function formatLedgerDate(date: string) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
+}
+
+function formatElapsed(resetAt: string | undefined, now: number) {
+  if (!resetAt || now === 0) return "NO RESET YET";
+  const seconds = Math.max(0, Math.floor((now - new Date(resetAt).getTime()) / 1000));
+  if (seconds < 5) return "JUST NOW";
+  if (seconds < 60) return `${seconds} SECONDS AGO`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} ${minutes === 1 ? "MINUTE" : "MINUTES"} AGO`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? "HOUR" : "HOURS"} AGO`;
+  const days = Math.floor(hours / 24);
+  return `${days} ${days === 1 ? "DAY" : "DAYS"} AGO`;
 }
 
 function signed(value: number) {
@@ -262,6 +276,7 @@ export default function Home() {
   const [ledgerStatus, setLedgerStatus] = useState<"connecting" | "live" | "offline">("connecting");
   const [ledgerOpen, setLedgerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const [clockNow, setClockNow] = useState(0);
   const [sparks] = useState(createSparks);
   const resetTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const sliderAnimationFrame = useRef<number | null>(null);
@@ -282,6 +297,8 @@ export default function Home() {
   const finish = stage.finish;
   const petitionCount = ledger.currentCount;
   const resetHistory = ledger.resets;
+  const latestReset = resetHistory.at(-1);
+  const lastResetElapsed = formatElapsed(latestReset?.resetAt, clockNow);
   const petitionHistory = useMemo(() => createPetitionHistory(ledger.days, resetHistory), [ledger.days, resetHistory]);
   const petitionMonths = useMemo(() => petitionHistory.reduce<{ label: string; column: number }[]>((markers, day, index) => {
     const month = Number(day.date.slice(5, 7)) - 1;
@@ -378,6 +395,13 @@ export default function Home() {
     const initialRefresh = window.setTimeout(() => void refreshLedger(), 0);
     return () => window.clearTimeout(initialRefresh);
   }, [refreshLedger]);
+
+  useEffect(() => {
+    const updateClock = () => setClockNow(Date.now());
+    updateClock();
+    const interval = window.setInterval(updateClock, 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!ledgerOpen) return;
@@ -490,7 +514,7 @@ export default function Home() {
           >
             <span>RESET PETITIONS</span>
             <strong>{petitionCount.toLocaleString("en-US")}</strong>
-            <small><i /> {ledgerStatus === "live" ? "LIVE LEDGER" : ledgerStatus === "offline" ? "RECONNECTING" : "CONNECTING"}</small>
+            <small><i /> {ledgerStatus === "live" ? `LAST RESET · ${lastResetElapsed}` : ledgerStatus === "offline" ? "RECONNECTING" : "CONNECTING"}</small>
           </button>
         </div>
       </header>
@@ -557,7 +581,7 @@ export default function Home() {
           <div className="ledger-stats" aria-label="Petition summary">
             <div><span>AWAITING RESET</span><strong>{petitionCount.toLocaleString("en-US")}</strong><small>ROUND {roman(ledger.currentRound)} · {ledgerStatus === "live" ? "LIVE" : "SYNCING"}</small></div>
             <div><span>PAST 52 WEEKS</span><strong>{historicPetitionTotal.toLocaleString("en-US")}</strong><small>RECORDED PETITIONS</small></div>
-            <div><span>RESETS GRANTED</span><strong>{resetHistory.length}</strong><small>BY IMPERIAL DECREE</small></div>
+            <div><span>RESETS GRANTED</span><strong>{resetHistory.length}</strong><small>{latestReset ? `LAST RESET ${lastResetElapsed}` : "BY IMPERIAL DECREE"}</small></div>
           </div>
 
           <div className="ledger-calendar">
@@ -607,7 +631,7 @@ export default function Home() {
             <div className="record-heading"><span>GRANTED RESETS</span><span>THE ARCHIVE REMEMBERS</span></div>
             <ol>
               {[...resetHistory].reverse().map((event) => (
-                <li key={event.date}>
+                <li key={event.resetAt}>
                   <button onClick={() => setSelectedDate(event.date)} type="button">
                     <b>{event.round}</b><span><strong>RESET GRANTED</strong><small>{formatLedgerDate(event.date)}</small></span><em>{event.petitions.toLocaleString("en-US")} pleas answered</em>
                   </button>

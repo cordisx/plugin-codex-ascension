@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { apply, backdrop, inject, manifest, presentation } from '../dist/codex-ascension.js'
+import { apply, backdrop, icon, inject, manifest, presentation } from '../dist/codex-ascension.js'
 
 test('exports a capability-free structured CordisX plugin', () => {
   assert.equal(manifest.schemaVersion, 1)
   assert.equal(manifest.id, 'codex-ascension')
   assert.deepEqual(manifest.capabilities, [])
+  assert.equal(icon.mediaType, 'image/png')
+  assert.ok(icon.data.length > 50_000)
   assert.deepEqual(inject, ['i18n', 'slots'])
   assert.equal(presentation.variant, 'imperium')
   assert.equal(presentation.motion, 'ascension')

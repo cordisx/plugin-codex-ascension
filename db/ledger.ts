@@ -4,7 +4,7 @@ export type LedgerSnapshot = {
   currentCount: number;
   currentRound: number;
   days: Array<{ date: string; count: number }>;
-  resets: Array<{ date: string; petitions: number; round: string }>;
+  resets: Array<{ date: string; resetAt: string; petitions: number; round: string }>;
 };
 
 type LedgerStateRow = {
@@ -98,6 +98,7 @@ export async function readLedger(): Promise<LedgerSnapshot> {
     days: days.map((day) => ({ date: day.day, count: Number(day.count) })),
     resets: resets.map((reset) => ({
       date: reset.reset_at.slice(0, 10),
+      resetAt: reset.reset_at,
       petitions: Number(reset.petition_count),
       round: roman(Number(reset.round)),
     })),

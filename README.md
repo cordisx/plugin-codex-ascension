@@ -67,14 +67,7 @@ The persistent ledger uses the `DB` D1 binding declared in
 `.openai/hosting.json`. A production reset also requires a hosted
 `RESET_ADMIN_TOKEN` secret. Never commit that value.
 
-## CordisX plugin status
-
-This repository currently ships the public Site. A CordisX experience plugin
-for the Codex reasoning-intensity surface is planned, but it is not implemented
-or distributed yet. Its UI will follow CordisX Host-owned rendering and styling
-boundaries rather than injecting the Site stylesheet into Codex.
-
-## License and project status
+## License
 
 The source code is available under the [MIT License](./LICENSE).
 

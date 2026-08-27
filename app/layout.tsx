@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "OpenAI Imperium",
   description: "Petition for a Codex reset and witness Tibo ascend from promptly bankrupt to Codex Maximus.",
+  icons: {
+    icon: [{ url: "/favicon.png", type: "image/png", sizes: "512x512" }],
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+  },
   openGraph: {
     title: "OpenAI Imperium",
     description: "Veni. Vidi. Reset. Join the live Codex reset petition.",

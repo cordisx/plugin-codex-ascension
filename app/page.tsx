@@ -62,7 +62,8 @@ function formatLedgerDate(date: string) {
 }
 
 function signed(value: number) {
-  return value > 0 ? `+${value}` : String(value);
+  const roundedValue = Math.round(value);
+  return roundedValue > 0 ? `+${roundedValue}` : String(roundedValue);
 }
 
 function roman(value: number) {
@@ -255,6 +256,7 @@ function LaurelCrown({ className, kind }: { className: string; kind: "reset" | "
 export default function Home() {
   const [strength, setStrength] = useState(-15);
   const [isResetting, setIsResetting] = useState(false);
+  const [isSliderAnimating, setIsSliderAnimating] = useState(false);
   const [resetStatus, setResetStatus] = useState("STANDBY");
   const [ledger, setLedger] = useState<LedgerPayload>(emptyLedger);
   const [ledgerStatus, setLedgerStatus] = useState<"connecting" | "live" | "offline">("connecting");
@@ -262,6 +264,8 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState("");
   const [sparks] = useState(createSparks);
   const resetTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sliderAnimationFrame = useRef<number | null>(null);
+  const strengthRef = useRef(strength);
   const progress = (strength + 15) / 30;
   const portraitLayers = stages.map((item, index) => ({
     ...item,
@@ -292,6 +296,49 @@ export default function Home() {
     ?? petitionHistory.find((day) => day.date === resetHistory[resetHistory.length - 1]?.date)
     ?? latestRecordedDay;
 
+  const cancelSliderAnimation = useCallback(() => {
+    if (sliderAnimationFrame.current !== null) {
+      window.cancelAnimationFrame(sliderAnimationFrame.current);
+      sliderAnimationFrame.current = null;
+    }
+    setIsSliderAnimating(false);
+  }, []);
+
+  const animateStrengthTo = useCallback((target: number) => {
+    cancelSliderAnimation();
+    const origin = strengthRef.current;
+    const destination = Math.max(-15, Math.min(15, Math.round(target)));
+
+    if (origin === destination || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      strengthRef.current = destination;
+      setStrength(destination);
+      return;
+    }
+
+    const startedAt = performance.now();
+    const duration = Math.min(620, 260 + Math.abs(destination - origin) * 12);
+    setIsSliderAnimating(true);
+
+    const advance = (now: number) => {
+      const elapsed = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - elapsed, 3);
+      const nextStrength = origin + (destination - origin) * eased;
+      strengthRef.current = nextStrength;
+      setStrength(nextStrength);
+
+      if (elapsed < 1) {
+        sliderAnimationFrame.current = window.requestAnimationFrame(advance);
+      } else {
+        sliderAnimationFrame.current = null;
+        strengthRef.current = destination;
+        setStrength(destination);
+        setIsSliderAnimating(false);
+      }
+    };
+
+    sliderAnimationFrame.current = window.requestAnimationFrame(advance);
+  }, [cancelSliderAnimation]);
+
   const refreshLedger = useCallback(async () => {
     try {
       const response = await fetch("/api/ledger", { cache: "no-store" });
@@ -320,7 +367,12 @@ export default function Home() {
 
   useEffect(() => () => {
     if (resetTimer.current) window.clearInterval(resetTimer.current);
+    if (sliderAnimationFrame.current !== null) window.cancelAnimationFrame(sliderAnimationFrame.current);
   }, []);
+
+  useEffect(() => {
+    strengthRef.current = strength;
+  }, [strength]);
 
   useEffect(() => {
     const initialRefresh = window.setTimeout(() => void refreshLedger(), 0);
@@ -352,7 +404,8 @@ export default function Home() {
   }, [ledgerOpen]);
 
   function requestReset() {
-    if (isResetting) return;
+    if (isResetting || isSliderAnimating) return;
+    cancelSliderAnimation();
     void recordPublicPetition();
     if (strength === 15) {
       setResetStatus("IMPERIAL RESET GRANTED");
@@ -365,6 +418,7 @@ export default function Home() {
     let nextStrength = strength;
     resetTimer.current = window.setInterval(() => {
       nextStrength = Math.min(nextStage, nextStrength + 1);
+      strengthRef.current = nextStrength;
       setStrength(nextStrength);
       setResetStatus(nextStrength < -5 ? "RESET PROPAGATING" : nextStrength < 8 ? "AUTHORITY ESCALATING" : "IMPERIAL SEAL ACTIVE");
       if (nextStrength === nextStage && resetTimer.current) {
@@ -376,10 +430,41 @@ export default function Home() {
     }, 105);
   }
 
+  function handleSliderPointerDown(event: React.PointerEvent<HTMLInputElement>) {
+    if (isResetting || isSliderAnimating) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const switchElement = event.currentTarget.parentElement;
+    const configuredPad = switchElement
+      ? Number.parseFloat(window.getComputedStyle(switchElement).getPropertyValue("--rail-pad"))
+      : 10;
+    const railPad = Number.isFinite(configuredPad) ? configuredPad : 10;
+    const thumbWidth = bounds.width * 0.1;
+    const travel = Math.max(1, bounds.width * 0.9 - railPad * 2);
+    const currentThumbCenter = bounds.left + railPad + thumbWidth / 2 + progress * travel;
+
+    if (Math.abs(event.clientX - currentThumbCenter) <= thumbWidth / 2 + 8) {
+      cancelSliderAnimation();
+      return;
+    }
+
+    event.preventDefault();
+    event.currentTarget.focus({ preventScroll: true });
+    const clickedProgress = Math.max(0, Math.min(1, (event.clientX - bounds.left - railPad - thumbWidth / 2) / travel));
+    animateStrengthTo(-15 + clickedProgress * 30);
+  }
+
+  function handleSliderChange(event: React.ChangeEvent<HTMLInputElement>) {
+    cancelSliderAnimation();
+    const nextStrength = Number(event.target.value);
+    strengthRef.current = nextStrength;
+    setStrength(nextStrength);
+  }
+
   return (
     <>
     <main
-      className={`experience material-${material}${isResetting ? " is-resetting" : ""}${strength === 15 ? " is-maxed" : ""}`}
+      className={`experience material-${material}${isResetting ? " is-resetting" : ""}${isSliderAnimating ? " is-slider-animating" : ""}${strength === 15 ? " is-maxed" : ""}`}
       style={{ "--progress": progress, "--hue": stage.hue } as React.CSSProperties}
     >
       <div className="grain" aria-hidden="true" />
@@ -438,13 +523,13 @@ export default function Home() {
             <div className="indicator right" aria-hidden="true" />
             <LaurelCrown className="rail-laurel" kind="rail" />
             <div className="rail-particles" aria-hidden="true">{sparks.map((spark, index) => <i className={spark.lane} key={`${spark.left}-${index}`} style={{ left: spark.left, width: spark.size, height: spark.size, animationDelay: spark.delay, "--drift": spark.drift, "--lift": spark.lift, "--spark-duration": spark.duration } as React.CSSProperties} />)}</div>
-            <input aria-label="Codex intensity" className="strength-range" disabled={isResetting} max="15" min="-15" onChange={(event) => setStrength(Number(event.target.value))} step="1" type="range" value={strength} />
+            <input aria-label="Codex intensity" aria-valuetext={signed(strength)} className="strength-range" disabled={isResetting || isSliderAnimating} max="15" min="-15" onChange={handleSliderChange} onPointerDown={handleSliderPointerDown} step="1" type="range" value={strength} />
             <div className="slider-button" aria-hidden="true" />
           </div>
           <button
             aria-label="Request a theatrical visual reset"
             className={`reset-button reset-stage-${stageIndex}${isResetting ? " is-resetting" : ""}`}
-            disabled={isResetting}
+            disabled={isResetting || isSliderAnimating}
             onClick={requestReset}
             style={{ "--surface-top": finish.hi, "--surface-bottom": finish.mid } as React.CSSProperties}
             type="button"

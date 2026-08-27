@@ -1,4 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis'
+import Schema from '@deepseek-ai/schemastery'
 import {
   CORDISX_PLUGIN_MANIFEST_SCHEMA_V1,
   type CordisXLocalizedText,
@@ -44,6 +45,10 @@ export interface AscensionBackdropPresentation {
   readonly variant: 'imperium'
   readonly driver: 'reasoning-intensity'
   readonly motion: 'ascension'
+  readonly layers?: {
+    readonly portrait?: boolean
+    readonly effects?: boolean
+  }
   readonly stages: readonly AscensionBackdropStage[]
 }
 
@@ -83,6 +88,47 @@ export const icon = {
 
 export const inject = ['i18n', 'slots']
 
+export interface Config {
+  readonly replaceReasoningSlider: boolean
+  readonly showBackdropPortrait: boolean
+  readonly enableBackdropEffects: boolean
+}
+
+export const Config: Schema<Config> = Schema.object({
+  replaceReasoningSlider: Schema.boolean().default(true)
+    .extra('extra', { label: { en: 'Replace reasoning slider', 'zh-CN': '替换思考强度 Slider' } })
+    .description('Apply the Imperium presentation to the native reasoning-intensity slider.')
+    .i18n({
+      en: 'Apply the Imperium presentation to the native reasoning-intensity slider.',
+      'zh-CN': '把 Imperium 升阶外观应用到原生思考强度 Slider。',
+    }),
+  showBackdropPortrait: Schema.boolean().default(true)
+    .extra('extra', { label: { en: 'Show backdrop portrait', 'zh-CN': '显示背景人像' } })
+    .description('Show the stage portrait in the lower-right background of the active session.')
+    .i18n({
+      en: 'Show the stage portrait in the lower-right background of the active session.',
+      'zh-CN': '在当前会话右下角背景中显示随档位变化的人像。',
+    }),
+  enableBackdropEffects: Schema.boolean().default(true)
+    .extra('extra', { label: { en: 'Enable backdrop effects', 'zh-CN': '启用背景特效' } })
+    .description('Enable the stage glow and architectural motion behind the active session.')
+    .i18n({
+      en: 'Enable the stage glow and architectural motion behind the active session.',
+      'zh-CN': '启用当前会话背景中的档位光晕与建筑纹样动画。',
+    }),
+}).extra('description', {
+  en: 'Choose which parts of Codex Ascension CordisX should project.',
+  'zh-CN': '选择 CordisX 要启用的 Codex Ascension 视觉部分。',
+})
+
+export const configApplies = 'plugin-restart' as const
+
+const defaultConfig: Config = {
+  replaceReasoningSlider: true,
+  showBackdropPortrait: true,
+  enableBackdropEffects: true,
+}
+
 export const presentation = {
   variant: 'imperium',
   title: { key: 'intensity.title', fallback: 'Reasoning intensity' },
@@ -109,7 +155,7 @@ export const backdrop = {
   ],
 } as const satisfies AscensionBackdropPresentation
 
-export function apply(ctx: Context): void {
+export function apply(ctx: Context, config: Config = defaultConfig): void {
   ctx.i18n.define<Messages>({
     namespace: 'codex-ascension', locale: 'en', default: true,
     messages: {
@@ -142,6 +188,16 @@ export function apply(ctx: Context): void {
       'portrait.gold': 'Tibo的 Codex Maximus 形态',
     },
   })
-  ctx.slots.register({ name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, presentation)
-  ctx.slots.register({ name: 'session.backdrop', id: 'imperium', order: 10 }, backdrop)
+  if (config.replaceReasoningSlider) {
+    ctx.slots.register({ name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, presentation)
+  }
+  if (config.showBackdropPortrait || config.enableBackdropEffects) {
+    ctx.slots.register({ name: 'session.backdrop', id: 'imperium', order: 10 }, {
+      ...backdrop,
+      layers: {
+        portrait: config.showBackdropPortrait,
+        effects: config.enableBackdropEffects,
+      },
+    })
+  }
 }

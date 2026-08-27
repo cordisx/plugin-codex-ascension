@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { apply, backdrop, icon, inject, manifest, presentation } from '../dist/codex-ascension.js'
+import { Config, apply, backdrop, configApplies, icon, inject, manifest, presentation } from '../dist/codex-ascension.js'
 
 test('exports a capability-free structured CordisX plugin', () => {
   assert.equal(manifest.schemaVersion, 1)
@@ -9,6 +9,12 @@ test('exports a capability-free structured CordisX plugin', () => {
   assert.equal(icon.mediaType, 'image/png')
   assert.ok(icon.data.length > 50_000)
   assert.deepEqual(inject, ['i18n', 'slots'])
+  assert.equal(configApplies, 'plugin-restart')
+  assert.deepEqual(Config({}), {
+    replaceReasoningSlider: true,
+    showBackdropPortrait: true,
+    enableBackdropEffects: true,
+  })
   assert.equal(presentation.variant, 'imperium')
   assert.equal(presentation.motion, 'ascension')
   assert.deepEqual(presentation.stages.map(stage => stage.material), ['plastic', 'bronze', 'steel', 'silver', 'gold'])
@@ -31,6 +37,38 @@ test('registers both structured surfaces and both retained locales', () => {
   assert.deepEqual(catalogs.map(catalog => catalog.locale), ['en', 'zh-CN'])
   assert.deepEqual(registrations, [
     { options: { name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, item: presentation },
-    { options: { name: 'session.backdrop', id: 'imperium', order: 10 }, item: backdrop },
+    {
+      options: { name: 'session.backdrop', id: 'imperium', order: 10 },
+      item: { ...backdrop, layers: { portrait: true, effects: true } },
+    },
   ])
+})
+
+test('independently enables the slider, portrait, and backdrop effects', () => {
+  const registrations = []
+  const context = {
+    i18n: { define: () => {} },
+    slots: { register: (options, item) => registrations.push({ options, item }) },
+  }
+
+  apply(context, {
+    replaceReasoningSlider: false,
+    showBackdropPortrait: true,
+    enableBackdropEffects: false,
+  })
+  assert.deepEqual(registrations, [{
+    options: { name: 'session.backdrop', id: 'imperium', order: 10 },
+    item: { ...backdrop, layers: { portrait: true, effects: false } },
+  }])
+
+  registrations.length = 0
+  apply(context, {
+    replaceReasoningSlider: true,
+    showBackdropPortrait: false,
+    enableBackdropEffects: false,
+  })
+  assert.deepEqual(registrations, [{
+    options: { name: 'composer.reasoning-intensity', id: 'imperium', order: 10 },
+    item: presentation,
+  }])
 })

@@ -67,6 +67,20 @@ The persistent ledger uses the `DB` D1 binding declared in
 `.openai/hosting.json`. A production reset also requires a hosted
 `RESET_ADMIN_TOKEN` secret. Never commit that value.
 
+## CordisX plugin
+
+The repository also contains the installable reasoning-intensity presentation
+under [`plugin/`](./plugin). It turns the native CordisX reasoning range from
+plastic through bronze, steel, silver, and gold while leaving values, events,
+keyboard interaction, accessibility, and persistence under Host control.
+
+```bash
+cd plugin
+npm install
+npm run check
+npm run dev
+```
+
 ## License
 
 The source code is available under the [MIT License](./LICENSE).

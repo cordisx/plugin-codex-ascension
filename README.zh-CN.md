@@ -64,6 +64,19 @@ npm run build
 持久账本使用 `.openai/hosting.json` 中声明的 `DB` D1 binding。生产环境执行
 Reset 还需要托管的 `RESET_ADMIN_TOKEN` secret，请勿把它提交到仓库。
 
+## CordisX 插件
+
+仓库的 [`plugin/`](./plugin) 目录包含可安装的思考强度视觉插件。它让原生
+CordisX 滑块依次呈现塑料白、青铜、钢、银和金色，但数值、事件、键盘操作、
+可访问性与持久化仍全部由 Host 控制。
+
+```bash
+cd plugin
+npm install
+npm run check
+npm run dev
+```
+
 ## 许可证与声明
 
 源代码采用 [MIT License](./LICENSE)。

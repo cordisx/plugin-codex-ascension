@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { apply, inject, manifest, presentation } from '../dist/codex-ascension.js'
+import { apply, backdrop, inject, manifest, presentation } from '../dist/codex-ascension.js'
 
 test('exports a capability-free structured CordisX plugin', () => {
   assert.equal(manifest.schemaVersion, 1)
@@ -12,9 +12,14 @@ test('exports a capability-free structured CordisX plugin', () => {
   assert.deepEqual(presentation.stages.map(stage => stage.material), ['plastic', 'bronze', 'steel', 'silver', 'gold'])
   assert.equal(Object.hasOwn(presentation, 'css'), false)
   assert.equal(Object.hasOwn(presentation, 'selector'), false)
+  assert.equal(backdrop.driver, 'reasoning-intensity')
+  assert.deepEqual(backdrop.stages.map(stage => stage.ambience), ['dormant', 'ember', 'forged', 'luminous', 'imperial'])
+  assert.ok(backdrop.stages.every(stage => stage.portrait.mediaType === 'image/png' && stage.portrait.data.length > 100_000))
+  assert.equal(Object.hasOwn(backdrop, 'css'), false)
+  assert.equal(Object.hasOwn(backdrop, 'selector'), false)
 })
 
-test('registers one structured surface and both retained locales', () => {
+test('registers both structured surfaces and both retained locales', () => {
   const catalogs = []
   const registrations = []
   apply({
@@ -22,8 +27,8 @@ test('registers one structured surface and both retained locales', () => {
     slots: { register: (options, item) => registrations.push({ options, item }) },
   })
   assert.deepEqual(catalogs.map(catalog => catalog.locale), ['en', 'zh-CN'])
-  assert.deepEqual(registrations, [{
-    options: { name: 'composer.reasoning-intensity', id: 'imperium', order: 10 },
-    item: presentation,
-  }])
+  assert.deepEqual(registrations, [
+    { options: { name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, item: presentation },
+    { options: { name: 'session.backdrop', id: 'imperium', order: 10 }, item: backdrop },
+  ])
 })

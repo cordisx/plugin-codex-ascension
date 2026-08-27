@@ -8,12 +8,12 @@
   "main": "./dist/codex-ascension.js",
   "types": "./dist/codex-ascension.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node scripts/generate-portrait-modules.mjs && tsc -p tsconfig.json",
     "check": "npm run typecheck && npm run build && npm test",
     "dev": "cordisx dev ./src/codex-ascension.ts",
     "dev:dry-run": "cordisx dev ./src/codex-ascension.ts --dry-run",
     "test": "node --test test/manifest.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "node scripts/generate-portrait-modules.mjs && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.1",

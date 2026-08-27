@@ -5,6 +5,13 @@ import {
   type CordisXPluginManifestV1,
 } from 'cordisx/contracts'
 import type {} from 'cordisx/contracts'
+import {
+  bronzePortrait,
+  goldPortrait,
+  plasticPortrait,
+  silverPortrait,
+  steelPortrait,
+} from './assets/portraits/generated.js'
 
 export type AscensionMaterial = 'plastic' | 'bronze' | 'steel' | 'silver' | 'gold'
 
@@ -20,9 +27,29 @@ export interface AscensionPresentation {
   readonly stages: readonly AscensionStage[]
 }
 
+export type AscensionAmbience = 'dormant' | 'ember' | 'forged' | 'luminous' | 'imperial'
+
+export interface AscensionBackdropStage {
+  readonly material: AscensionMaterial
+  readonly ambience: AscensionAmbience
+  readonly portrait: {
+    readonly mediaType: 'image/png'
+    readonly data: string
+    readonly alt: CordisXLocalizedText
+  }
+}
+
+export interface AscensionBackdropPresentation {
+  readonly variant: 'imperium'
+  readonly driver: 'reasoning-intensity'
+  readonly motion: 'ascension'
+  readonly stages: readonly AscensionBackdropStage[]
+}
+
 declare module 'cordisx/contracts' {
   interface CordisXSurfaceMap {
     'composer.reasoning-intensity': AscensionPresentation
+    'session.backdrop': AscensionBackdropPresentation
   }
 }
 
@@ -33,6 +60,11 @@ type Messages = {
   'stage.steel': undefined
   'stage.silver': undefined
   'stage.gold': undefined
+  'portrait.plastic': undefined
+  'portrait.bronze': undefined
+  'portrait.steel': undefined
+  'portrait.silver': undefined
+  'portrait.gold': undefined
 }
 
 export const manifest = {
@@ -58,6 +90,19 @@ export const presentation = {
   ],
 } as const satisfies AscensionPresentation
 
+export const backdrop = {
+  variant: 'imperium',
+  driver: 'reasoning-intensity',
+  motion: 'ascension',
+  stages: [
+    { material: 'plastic', ambience: 'dormant', portrait: { mediaType: 'image/png', data: plasticPortrait, alt: { key: 'portrait.plastic', fallback: 'Tibo as the exhausted scribe' } } },
+    { material: 'bronze', ambience: 'ember', portrait: { mediaType: 'image/png', data: bronzePortrait, alt: { key: 'portrait.bronze', fallback: 'Tibo as the night builder' } } },
+    { material: 'steel', ambience: 'forged', portrait: { mediaType: 'image/png', data: steelPortrait, alt: { key: 'portrait.steel', fallback: 'Tibo as the agent commander' } } },
+    { material: 'silver', ambience: 'luminous', portrait: { mediaType: 'image/png', data: silverPortrait, alt: { key: 'portrait.silver', fallback: 'Tibo as the consul of code' } } },
+    { material: 'gold', ambience: 'imperial', portrait: { mediaType: 'image/png', data: goldPortrait, alt: { key: 'portrait.gold', fallback: 'Tibo as Codex Maximus' } } },
+  ],
+} as const satisfies AscensionBackdropPresentation
+
 export function apply(ctx: Context): void {
   ctx.i18n.define<Messages>({
     namespace: 'codex-ascension', locale: 'en', default: true,
@@ -68,6 +113,11 @@ export function apply(ctx: Context): void {
       'stage.steel': 'Tool-Forged Tribune',
       'stage.silver': 'Silver Context',
       'stage.gold': 'Codex Maximus',
+      'portrait.plastic': 'Tibo as the exhausted scribe',
+      'portrait.bronze': 'Tibo as the night builder',
+      'portrait.steel': 'Tibo as the agent commander',
+      'portrait.silver': 'Tibo as the consul of code',
+      'portrait.gold': 'Tibo as Codex Maximus',
     },
   })
   ctx.i18n.define<Messages>({
@@ -79,7 +129,13 @@ export function apply(ctx: Context): void {
       'stage.steel': '工具锻造官',
       'stage.silver': '白银上下文',
       'stage.gold': 'Codex Maximus',
+      'portrait.plastic': 'Tibo的疲惫抄写员形态',
+      'portrait.bronze': 'Tibo的深夜构筑者形态',
+      'portrait.steel': 'Tibo的智能体指挥官形态',
+      'portrait.silver': 'Tibo的代码执政官形态',
+      'portrait.gold': 'Tibo的 Codex Maximus 形态',
     },
   })
   ctx.slots.register({ name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, presentation)
+  ctx.slots.register({ name: 'session.backdrop', id: 'imperium', order: 10 }, backdrop)
 }

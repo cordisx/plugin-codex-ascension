@@ -12,6 +12,7 @@ import {
   silverPortrait,
   steelPortrait,
 } from './assets/portraits/generated.js'
+import { ascensionIcon } from './assets/identity/generated.js'
 
 export type AscensionMaterial = 'plastic' | 'bronze' | 'steel' | 'silver' | 'gold'
 
@@ -74,6 +75,11 @@ export const manifest = {
   name: 'Codex Ascension',
   capabilities: [],
 } as const satisfies CordisXPluginManifestV1
+
+export const icon = {
+  mediaType: 'image/png',
+  data: ascensionIcon,
+} as const
 
 export const inject = ['i18n', 'slots']
 

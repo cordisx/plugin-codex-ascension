@@ -2,6 +2,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import Schema from '@deepseek-ai/schemastery'
 import {
   CORDISX_PLUGIN_MANIFEST_SCHEMA_V1,
+  type CordisXExtensionPointControlClaimOptions,
   type CordisXLocalizedText,
   type CordisXPluginManifestV1,
 } from 'cordisx/contracts'
@@ -50,13 +51,6 @@ export interface AscensionBackdropPresentation {
     readonly effects?: boolean
   }
   readonly stages: readonly AscensionBackdropStage[]
-}
-
-declare module 'cordisx/contracts' {
-  interface CordisXSurfaceMap {
-    'composer.reasoning-intensity': AscensionPresentation
-    'session.backdrop': AscensionBackdropPresentation
-  }
 }
 
 type Messages = {
@@ -142,6 +136,17 @@ export const presentation = {
   ],
 } as const satisfies AscensionPresentation
 
+export const reasoningControl = {
+  claimId: 'imperium',
+  mode: 'replace',
+  priority: 10,
+  requestedBindings: {
+    properties: ['reasoningIntensity'],
+    commands: ['setReasoningIntensity'],
+    events: ['reasoningIntensityChanged'],
+  },
+} as const satisfies CordisXExtensionPointControlClaimOptions
+
 export const backdrop = {
   variant: 'imperium',
   driver: 'reasoning-intensity',
@@ -189,7 +194,12 @@ export function apply(ctx: Context, config: Config = defaultConfig): void {
     },
   })
   if (config.replaceReasoningSlider) {
-    ctx.slots.register({ name: 'composer.reasoning-intensity', id: 'imperium', order: 10 }, presentation)
+    ctx.slots.register({
+      name: 'composer.reasoning-intensity',
+      id: 'imperium',
+      order: 10,
+      control: reasoningControl,
+    }, presentation)
   }
   if (config.showBackdropPortrait || config.enableBackdropEffects) {
     ctx.slots.register({ name: 'session.backdrop', id: 'imperium', order: 10 }, {

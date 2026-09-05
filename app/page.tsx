@@ -1,14 +1,62 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const stages = [
-  { value: -15, latin: "NULLA QUOTA", name: "Promptly Bankrupt", image: "/tibo-exhausted-scribe.png", note: "one prompt from financial ruin", hue: 30, finish: { hi: "#fdfbf4", mid: "#d9d5cb", deep: "#817d74", rail: "#413c37", shadow: "#201d1a" } },
-  { value: -9, latin: "RATE LIMITUS", name: "The Rate-Limited", image: "/tibo-night-builder.png", note: "shift happens after midnight", hue: 38, finish: { hi: "#e8eceb", mid: "#9ba4a5", deep: "#445053", rail: "#384044", shadow: "#171b1d" } },
-  { value: -3, latin: "FABER EX MACHINA", name: "Promptus Prime", image: "/tibo-systems-author.png", note: "the prompt begins to compound", hue: 45, finish: { hi: "#f0cb8a", mid: "#b57431", deep: "#633716", rail: "#533923", shadow: "#24160c" } },
-  { value: 3, latin: "AGENTIUM DOMINUS", name: "Lord of the Agents", image: "/tibo-agent-commander.png", note: "many agents, one throne", hue: 51, finish: { hi: "#f4f4ef", mid: "#b8bfbe", deep: "#697274", rail: "#42494a", shadow: "#242a2b" } },
-  { value: 9, latin: "CAESAR CONTEXTUS", name: "Caesar of Context", image: "/tibo-consul-of-code.png", note: "the context window bows", hue: 58, finish: { hi: "#f8e2bd", mid: "#c68e61", deep: "#71432d", rail: "#5b4134", shadow: "#2b1c16" } },
-  { value: 15, latin: "CODEX MAXIMUS", name: "Codex Maximus", image: "/tibo-imperator-codicis.png", note: "veni, vidi, reset", hue: 65, finish: { hi: "#fff0ae", mid: "#d3a22b", deep: "#70440c", rail: "#594419", shadow: "#2b1d08" } },
+  {
+    value: -15,
+    latin: 'NULLA QUOTA',
+    name: 'Promptly Bankrupt',
+    image: '/tibo-exhausted-scribe.png',
+    note: 'one prompt from financial ruin',
+    hue: 30,
+    finish: { hi: '#fdfbf4', mid: '#d9d5cb', deep: '#817d74', rail: '#413c37', shadow: '#201d1a' },
+  },
+  {
+    value: -9,
+    latin: 'RATE LIMITUS',
+    name: 'The Rate-Limited',
+    image: '/tibo-night-builder.png',
+    note: 'shift happens after midnight',
+    hue: 38,
+    finish: { hi: '#e8eceb', mid: '#9ba4a5', deep: '#445053', rail: '#384044', shadow: '#171b1d' },
+  },
+  {
+    value: -3,
+    latin: 'FABER EX MACHINA',
+    name: 'Promptus Prime',
+    image: '/tibo-systems-author.png',
+    note: 'the prompt begins to compound',
+    hue: 45,
+    finish: { hi: '#f0cb8a', mid: '#b57431', deep: '#633716', rail: '#533923', shadow: '#24160c' },
+  },
+  {
+    value: 3,
+    latin: 'AGENTIUM DOMINUS',
+    name: 'Lord of the Agents',
+    image: '/tibo-agent-commander.png',
+    note: 'many agents, one throne',
+    hue: 51,
+    finish: { hi: '#f4f4ef', mid: '#b8bfbe', deep: '#697274', rail: '#42494a', shadow: '#242a2b' },
+  },
+  {
+    value: 9,
+    latin: 'CAESAR CONTEXTUS',
+    name: 'Caesar of Context',
+    image: '/tibo-consul-of-code.png',
+    note: 'the context window bows',
+    hue: 58,
+    finish: { hi: '#f8e2bd', mid: '#c68e61', deep: '#71432d', rail: '#5b4134', shadow: '#2b1c16' },
+  },
+  {
+    value: 15,
+    latin: 'CODEX MAXIMUS',
+    name: 'Codex Maximus',
+    image: '/tibo-imperator-codicis.png',
+    note: 'veni, vidi, reset',
+    hue: 65,
+    finish: { hi: '#fff0ae', mid: '#d3a22b', deep: '#70440c', rail: '#594419', shadow: '#2b1d08' },
+  },
 ];
 
 type ResetEvent = {
@@ -29,15 +77,15 @@ type PetitionDay = {
 type LedgerPayload = {
   currentCount: number;
   currentRound: number;
-  days: Array<{ date: string; count: number }>;
+  days: Array<{ date: string; count: number; }>;
   resets: ResetEvent[];
 };
 
 const emptyLedger: LedgerPayload = { currentCount: 0, currentRound: 1, days: [], resets: [] };
 
-const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-function createPetitionHistory(days: LedgerPayload["days"], resets: ResetEvent[]): PetitionDay[] {
+function createPetitionHistory(days: LedgerPayload['days'], resets: ResetEvent[]): PetitionDay[] {
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const firstDay = new Date(today);
@@ -59,20 +107,22 @@ function createPetitionHistory(days: LedgerPayload["days"], resets: ResetEvent[]
 }
 
 function formatLedgerDate(date: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(
+    new Date(`${date}T00:00:00Z`),
+  );
 }
 
 function formatElapsed(resetAt: string | undefined, now: number) {
-  if (!resetAt || now === 0) return "NO RESET YET";
+  if (!resetAt || now === 0) return 'NO RESET YET';
   const seconds = Math.max(0, Math.floor((now - new Date(resetAt).getTime()) / 1000));
-  if (seconds < 5) return "JUST NOW";
+  if (seconds < 5) return 'JUST NOW';
   if (seconds < 60) return `${seconds} SECONDS AGO`;
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} ${minutes === 1 ? "MINUTE" : "MINUTES"} AGO`;
+  if (minutes < 60) return `${minutes} ${minutes === 1 ? 'MINUTE' : 'MINUTES'} AGO`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} ${hours === 1 ? "HOUR" : "HOURS"} AGO`;
+  if (hours < 24) return `${hours} ${hours === 1 ? 'HOUR' : 'HOURS'} AGO`;
   const days = Math.floor(hours / 24);
-  return `${days} ${days === 1 ? "DAY" : "DAYS"} AGO`;
+  return `${days} ${days === 1 ? 'DAY' : 'DAYS'} AGO`;
 }
 
 function signed(value: number) {
@@ -81,9 +131,23 @@ function signed(value: number) {
 }
 
 function roman(value: number) {
-  const numerals: Array<[number, string]> = [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  const numerals: Array<[number, string]> = [
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
+  ];
   let remaining = Math.max(1, Math.floor(value));
-  let result = "";
+  let result = '';
   for (const [amount, numeral] of numerals) {
     while (remaining >= amount) {
       result += numeral;
@@ -101,7 +165,7 @@ function createSparks() {
     duration: `${(1.25 + stableRandom(index + 853) * 1.8).toFixed(2)}s`,
     delay: `-${(stableRandom(index + 877) * 2.8).toFixed(2)}s`,
     size: `${2 + Math.round(stableRandom(index + 881) * 3)}px`,
-    lane: index % 2 === 0 ? "above" : "below",
+    lane: index % 2 === 0 ? 'above' : 'below',
   }));
 }
 
@@ -128,7 +192,10 @@ function rounded(value: number) {
   return Number(value.toFixed(4));
 }
 
-function leafMotion(id: string, index: number): Pick<LaurelLeaf, "id" | "scale" | "duration" | "delay" | "sway" | "drift" | "lift" | "releaseDelay"> {
+function leafMotion(
+  id: string,
+  index: number,
+): Pick<LaurelLeaf, 'id' | 'scale' | 'duration' | 'delay' | 'sway' | 'drift' | 'lift' | 'releaseDelay'> {
   return {
     id,
     scale: rounded(0.78 + stableRandom(index + 17) * 0.32),
@@ -141,8 +208,8 @@ function leafMotion(id: string, index: number): Pick<LaurelLeaf, "id" | "scale" 
   };
 }
 
-function createLaurelLayout(kind: "reset" | "rail"): LaurelLeaf[] {
-  if (kind === "reset") {
+function createLaurelLayout(kind: 'reset' | 'rail'): LaurelLeaf[] {
+  if (kind === 'reset') {
     return Array.from({ length: 14 }, (_, index) => {
       const angle = (index / 14) * Math.PI * 2 + (stableRandom(index + 211) - 0.5) * 0.14;
       const radiusX = 46 + (stableRandom(index + 227) - 0.5) * 5;
@@ -176,19 +243,19 @@ function createLaurelLayout(kind: "reset" | "rail"): LaurelLeaf[] {
     };
   });
   const caps = [
-    { ...leafMotion("rail-left-top", 28), left: -0.5, top: 31, rotation: -76 },
-    { ...leafMotion("rail-left-bottom", 29), left: 0.7, top: 69, rotation: -104 },
-    { ...leafMotion("rail-right-top", 30), left: 100.5, top: 37, rotation: 88 },
-    { ...leafMotion("rail-right-bottom", 31), left: 99.4, top: 64, rotation: 103 },
+    { ...leafMotion('rail-left-top', 28), left: -0.5, top: 31, rotation: -76 },
+    { ...leafMotion('rail-left-bottom', 29), left: 0.7, top: 69, rotation: -104 },
+    { ...leafMotion('rail-right-top', 30), left: 100.5, top: 37, rotation: 88 },
+    { ...leafMotion('rail-right-bottom', 31), left: 99.4, top: 64, rotation: 103 },
   ];
   return [...top, ...bottom, ...caps];
 }
 
-const resetLaurelLeaves = createLaurelLayout("reset");
-const railLaurelLeaves = createLaurelLayout("rail");
+const resetLaurelLeaves = createLaurelLayout('reset');
+const railLaurelLeaves = createLaurelLayout('rail');
 
-function LaurelCrown({ className, kind }: { className: string; kind: "reset" | "rail" }) {
-  const leaves = kind === "reset" ? resetLaurelLeaves : railLaurelLeaves;
+function LaurelCrown({ className, kind }: { className: string; kind: 'reset' | 'rail'; }) {
+  const leaves = kind === 'reset' ? resetLaurelLeaves : railLaurelLeaves;
   const frameRef = useRef<HTMLSpanElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
@@ -212,7 +279,7 @@ function LaurelCrown({ className, kind }: { className: string; kind: "reset" | "
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(frameSize.width * pixelRatio);
     canvas.height = Math.round(frameSize.height * pixelRatio);
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
     if (!context) return;
     let animationFrame = 0;
     const draw = (time: number) => {
@@ -246,8 +313,8 @@ function LaurelCrown({ className, kind }: { className: string; kind: "reset" | "
         context.strokeStyle = getComputedStyle(frame).color;
         context.globalAlpha = 0.55;
         context.lineWidth = 1;
-        context.lineCap = "round";
-        context.lineJoin = "round";
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
         context.stroke();
       }
       animationFrame = window.requestAnimationFrame(draw);
@@ -259,8 +326,27 @@ function LaurelCrown({ className, kind }: { className: string; kind: "reset" | "
     <span className={`laurel-crown ${className}`} aria-hidden="true" ref={frameRef}>
       <canvas className="laurel-canvas" ref={canvasRef} />
       {leaves.map((leaf) => (
-        <span className="laurel-anchor" key={leaf.id} style={{ left: `${leaf.left}%`, top: `${leaf.top}%`, "--leaf-rotation": `${leaf.rotation}deg`, "--release-delay": leaf.releaseDelay } as React.CSSProperties}>
-          <i className="laurel-leaf" style={{ "--leaf-scale": leaf.scale, "--wind-duration": leaf.duration, "--wind-delay": leaf.delay, "--wind-sway": leaf.sway, "--wind-drift": leaf.drift, "--wind-lift": leaf.lift } as React.CSSProperties} />
+        <span
+          className="laurel-anchor"
+          key={leaf.id}
+          style={{
+            left: `${leaf.left}%`,
+            top: `${leaf.top}%`,
+            '--leaf-rotation': `${leaf.rotation}deg`,
+            '--release-delay': leaf.releaseDelay,
+          } as React.CSSProperties}
+        >
+          <i
+            className="laurel-leaf"
+            style={{
+              '--leaf-scale': leaf.scale,
+              '--wind-duration': leaf.duration,
+              '--wind-delay': leaf.delay,
+              '--wind-sway': leaf.sway,
+              '--wind-drift': leaf.drift,
+              '--wind-lift': leaf.lift,
+            } as React.CSSProperties}
+          />
         </span>
       ))}
     </span>
@@ -271,11 +357,11 @@ export default function Home() {
   const [strength, setStrength] = useState(-15);
   const [isResetting, setIsResetting] = useState(false);
   const [isSliderAnimating, setIsSliderAnimating] = useState(false);
-  const [resetStatus, setResetStatus] = useState("STANDBY");
+  const [resetStatus, setResetStatus] = useState('STANDBY');
   const [ledger, setLedger] = useState<LedgerPayload>(emptyLedger);
-  const [ledgerStatus, setLedgerStatus] = useState<"connecting" | "live" | "offline">("connecting");
+  const [ledgerStatus, setLedgerStatus] = useState<'connecting' | 'live' | 'offline'>('connecting');
   const [ledgerOpen, setLedgerOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState('');
   const [clockNow, setClockNow] = useState(0);
   const [sparks] = useState(createSparks);
   const resetTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -293,25 +379,30 @@ export default function Home() {
     [strength],
   );
   const stageIndex = stages.findIndex((item) => item.value === stage.value);
-  const material = strength < -7 ? "plastic" : strength < 6 ? "bronze" : strength < 13 ? "silver" : "gold";
+  const material = strength < -7 ? 'plastic' : strength < 6 ? 'bronze' : strength < 13 ? 'silver' : 'gold';
   const finish = stage.finish;
   const petitionCount = ledger.currentCount;
   const resetHistory = ledger.resets;
   const latestReset = resetHistory.at(-1);
   const lastResetElapsed = formatElapsed(latestReset?.resetAt, clockNow);
   const petitionHistory = useMemo(() => createPetitionHistory(ledger.days, resetHistory), [ledger.days, resetHistory]);
-  const petitionMonths = useMemo(() => petitionHistory.reduce<{ label: string; column: number }[]>((markers, day, index) => {
-    const month = Number(day.date.slice(5, 7)) - 1;
-    if (index === 0 || day.date.slice(5, 7) !== petitionHistory[index - 1].date.slice(5, 7)) {
-      markers.push({ label: monthNames[month], column: Math.floor(index / 7) + 1 });
-    }
-    return markers;
-  }, []), [petitionHistory]);
+  const petitionMonths = useMemo(
+    () =>
+      petitionHistory.reduce<{ label: string; column: number; }[]>((markers, day, index) => {
+        const month = Number(day.date.slice(5, 7)) - 1;
+        if (index === 0 || day.date.slice(5, 7) !== petitionHistory[index - 1].date.slice(5, 7)) {
+          markers.push({ label: monthNames[month], column: Math.floor(index / 7) + 1 });
+        }
+        return markers;
+      }, []),
+    [petitionHistory],
+  );
   const allTimePetitionTotal = useMemo(
     () => petitionCount + resetHistory.reduce((sum, event) => sum + event.petitions, 0),
     [petitionCount, resetHistory],
   );
-  const latestRecordedDay = [...petitionHistory].reverse().find((day) => !day.isFuture) ?? petitionHistory[petitionHistory.length - 1];
+  const latestRecordedDay = [...petitionHistory].reverse().find((day) => !day.isFuture)
+    ?? petitionHistory[petitionHistory.length - 1];
   const selectedDay = petitionHistory.find((day) => day.date === selectedDate)
     ?? petitionHistory.find((day) => day.date === resetHistory[resetHistory.length - 1]?.date)
     ?? latestRecordedDay;
@@ -329,7 +420,7 @@ export default function Home() {
     const origin = strengthRef.current;
     const destination = Math.max(-15, Math.min(15, Math.round(target)));
 
-    if (origin === destination || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (origin === destination || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       strengthRef.current = destination;
       setStrength(destination);
       return;
@@ -361,26 +452,26 @@ export default function Home() {
 
   const refreshLedger = useCallback(async () => {
     try {
-      const response = await fetch("/api/ledger", { cache: "no-store" });
-      if (!response.ok) throw new Error("Ledger unavailable");
+      const response = await fetch('/api/ledger', { cache: 'no-store' });
+      if (!response.ok) throw new Error('Ledger unavailable');
       const payload = await response.json() as LedgerPayload;
       setLedger(payload);
-      setLedgerStatus("live");
+      setLedgerStatus('live');
     } catch {
-      setLedgerStatus("offline");
+      setLedgerStatus('offline');
     }
   }, []);
 
   const recordPublicPetition = useCallback(async () => {
     setLedger((current) => ({ ...current, currentCount: current.currentCount + 1 }));
     try {
-      const response = await fetch("/api/petition", { method: "POST" });
-      if (!response.ok) throw new Error("Petition rejected");
+      const response = await fetch('/api/petition', { method: 'POST' });
+      if (!response.ok) throw new Error('Petition rejected');
       const payload = await response.json() as LedgerPayload;
       setLedger(payload);
-      setLedgerStatus("live");
+      setLedgerStatus('live');
     } catch {
-      setLedgerStatus("offline");
+      setLedgerStatus('offline');
       void refreshLedger();
     }
   }, [refreshLedger]);
@@ -420,13 +511,13 @@ export default function Home() {
     if (!ledgerOpen) return;
     const previousOverflow = document.body.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setLedgerOpen(false);
+      if (event.key === 'Escape') setLedgerOpen(false);
     };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", closeOnEscape);
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener('keydown', closeOnEscape);
     };
   }, [ledgerOpen]);
 
@@ -435,23 +526,25 @@ export default function Home() {
     cancelSliderAnimation();
     void recordPublicPetition();
     if (strength === 15) {
-      setResetStatus("IMPERIAL RESET GRANTED");
+      setResetStatus('IMPERIAL RESET GRANTED');
       return;
     }
 
     setIsResetting(true);
-    setResetStatus("PETITION RECEIVED");
+    setResetStatus('PETITION RECEIVED');
     const nextStage = stages.find((item) => item.value > strength)?.value ?? 15;
     let nextStrength = strength;
     resetTimer.current = window.setInterval(() => {
       nextStrength = Math.min(nextStage, nextStrength + 1);
       strengthRef.current = nextStrength;
       setStrength(nextStrength);
-      setResetStatus(nextStrength < -5 ? "RESET PROPAGATING" : nextStrength < 8 ? "AUTHORITY ESCALATING" : "IMPERIAL SEAL ACTIVE");
+      setResetStatus(
+        nextStrength < -5 ? 'RESET PROPAGATING' : nextStrength < 8 ? 'AUTHORITY ESCALATING' : 'IMPERIAL SEAL ACTIVE',
+      );
       if (nextStrength === nextStage && resetTimer.current) {
         window.clearInterval(resetTimer.current);
         resetTimer.current = null;
-        setResetStatus(nextStrength === 15 ? "RESET GRANTED" : "SEAL RECORDED");
+        setResetStatus(nextStrength === 15 ? 'RESET GRANTED' : 'SEAL RECORDED');
         window.setTimeout(() => setIsResetting(false), 850);
       }
     }, 105);
@@ -463,7 +556,7 @@ export default function Home() {
     const bounds = event.currentTarget.getBoundingClientRect();
     const switchElement = event.currentTarget.parentElement;
     const configuredPad = switchElement
-      ? Number.parseFloat(window.getComputedStyle(switchElement).getPropertyValue("--rail-pad"))
+      ? Number.parseFloat(window.getComputedStyle(switchElement).getPropertyValue('--rail-pad'))
       : 10;
     const railPad = Number.isFinite(configuredPad) ? configuredPad : 10;
     const thumbWidth = bounds.width * 0.1;
@@ -490,163 +583,297 @@ export default function Home() {
 
   return (
     <>
-    <main
-      className={`experience material-${material}${isResetting ? " is-resetting" : ""}${isSliderAnimating ? " is-slider-animating" : ""}${strength === 15 ? " is-maxed" : ""}`}
-      style={{ "--progress": progress, "--hue": stage.hue } as React.CSSProperties}
-    >
-      <div className="grain" aria-hidden="true" />
-      <div className="openai-watermark" aria-hidden="true">
-        <img src="/openai-mark.svg" alt="" />
-      </div>
-      <header className="masthead">
-        <div>
-          <p className="eyebrow">CODEX ASCENSION</p>
-          <h1>OpenAI<span>Imperium</span></h1>
+      <main
+        className={`experience material-${material}${isResetting ? ' is-resetting' : ''}${
+          isSliderAnimating ? ' is-slider-animating' : ''
+        }${strength === 15 ? ' is-maxed' : ''}`}
+        style={{ '--progress': progress, '--hue': stage.hue } as React.CSSProperties}
+      >
+        <div className="grain" aria-hidden="true" />
+        <div className="openai-watermark" aria-hidden="true">
+          <img src="/openai-mark.svg" alt="" />
         </div>
-        <div className="meter-cluster">
-          <div className="meter" aria-label={`Current strength ${signed(strength)}`}>
-            <span>INTENSITY</span><strong>{signed(strength)}</strong><i />
+        <header className="masthead">
+          <div>
+            <p className="eyebrow">CODEX ASCENSION</p>
+            <h1>
+              OpenAI<span>Imperium</span>
+            </h1>
           </div>
-          <button
-            aria-controls="petition-ledger"
-            aria-expanded={ledgerOpen}
-            aria-label={`Open petition and reset history. ${petitionCount.toLocaleString("en-US")} petitions awaiting reset, ${allTimePetitionTotal.toLocaleString("en-US")} petitions all time.`}
-            className="petition-trigger"
-            onClick={() => setLedgerOpen(true)}
-            type="button"
-          >
-            <span>RESET PETITIONS</span>
-            <strong>{petitionCount.toLocaleString("en-US")}</strong>
-            <b className="historic-petitions">ALL TIME · {allTimePetitionTotal.toLocaleString("en-US")}</b>
-            <small><i /> {ledgerStatus === "live" ? `LAST RESET · ${lastResetElapsed}` : ledgerStatus === "offline" ? "RECONNECTING" : "CONNECTING"}</small>
-          </button>
-        </div>
-      </header>
-
-      <section className="portrait-zone" aria-label="Tibo Codex Ascension portrait">
-        <div className="stage-ghost" aria-hidden="true">{stage.latin}</div>
-        <div className="architecture architecture-left" aria-hidden="true" />
-        <div className="architecture architecture-right" aria-hidden="true" />
-        <div className="halo" aria-hidden="true" />
-        <div className="portrait-frame">
-          {portraitLayers.map((portrait, index) => (
-            <img
-              alt={`Tibo as ${portrait.name}`}
-              className={`portrait ${index === 0 ? "portrait-low" : index === stages.length - 1 ? "portrait-high" : "portrait-mid"}`}
-              key={portrait.name}
-              src={portrait.image}
-              style={{ opacity: portrait.opacity }}
-            />
-          ))}
-          <div className="frame-lines" aria-hidden="true" />
-        </div>
-        <div className="readout"><div><b>{stage.latin}</b><strong>{stage.name}</strong></div></div>
-      </section>
-
-      <section className="calibrator" aria-label="Codex intensity control">
-        <div className="calibrator-heading"><span>INTENSITY</span><span>{isResetting ? resetStatus : ""}</span></div>
-        <div className="range-shell">
-          <div className="imperial-switch" style={{ "--slider-position": progress, "--material-hi": finish.hi, "--material-mid": finish.mid, "--material-deep": finish.deep, "--rail-base": finish.rail, "--rail-shadow": finish.shadow } as React.CSSProperties}>
-            <div className="indicator left" aria-hidden="true" />
-            <div className="indicator right" aria-hidden="true" />
-            <LaurelCrown className="rail-laurel" kind="rail" />
-            <div className="rail-particles" aria-hidden="true">{sparks.map((spark, index) => <i className={spark.lane} key={`${spark.left}-${index}`} style={{ left: spark.left, width: spark.size, height: spark.size, animationDelay: spark.delay, "--drift": spark.drift, "--lift": spark.lift, "--spark-duration": spark.duration } as React.CSSProperties} />)}</div>
-            <input aria-label="Codex intensity" aria-valuetext={signed(strength)} className="strength-range" disabled={isResetting || isSliderAnimating} max="15" min="-15" onChange={handleSliderChange} onPointerDown={handleSliderPointerDown} step="1" type="range" value={strength} />
-            <div className="slider-button" aria-hidden="true" />
+          <div className="meter-cluster">
+            <div className="meter" aria-label={`Current strength ${signed(strength)}`}>
+              <span>INTENSITY</span>
+              <strong>{signed(strength)}</strong>
+              <i />
+            </div>
+            <button
+              aria-controls="petition-ledger"
+              aria-expanded={ledgerOpen}
+              aria-label={`Open petition and reset history. ${
+                petitionCount.toLocaleString('en-US')
+              } petitions awaiting reset, ${allTimePetitionTotal.toLocaleString('en-US')} petitions all time.`}
+              className="petition-trigger"
+              onClick={() => setLedgerOpen(true)}
+              type="button"
+            >
+              <span>RESET PETITIONS</span>
+              <strong>{petitionCount.toLocaleString('en-US')}</strong>
+              <b className="historic-petitions">ALL TIME · {allTimePetitionTotal.toLocaleString('en-US')}</b>
+              <small>
+                <i /> {ledgerStatus === 'live'
+                  ? `LAST RESET · ${lastResetElapsed}`
+                  : ledgerStatus === 'offline'
+                  ? 'RECONNECTING'
+                  : 'CONNECTING'}
+              </small>
+            </button>
           </div>
-          <button
-            aria-label="Request a theatrical visual reset"
-            className={`reset-button reset-stage-${stageIndex}${isResetting ? " is-resetting" : ""}`}
-            disabled={isResetting || isSliderAnimating}
-            onClick={requestReset}
-            style={{ "--surface-top": finish.hi, "--surface-bottom": finish.mid } as React.CSSProperties}
-            type="button"
-          >
-            <span className="reset-button-outer">
-              <span className="reset-button-inner"><span>Reset</span></span>
-            </span>
-          </button>
-        </div>
-      </section>
-      <footer><span>IV · VI — ASCENSION PROTOCOL</span><span>NO CROWN WITHOUT THE BUILD</span></footer>
-    </main>
-    {ledgerOpen && (
-      <div className="ledger-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setLedgerOpen(false); }}>
-        <section aria-labelledby="petition-ledger-title" aria-modal="true" className="petition-ledger" id="petition-ledger" role="dialog">
-          <header className="ledger-header">
+        </header>
+
+        <section className="portrait-zone" aria-label="Tibo Codex Ascension portrait">
+          <div className="stage-ghost" aria-hidden="true">{stage.latin}</div>
+          <div className="architecture architecture-left" aria-hidden="true" />
+          <div className="architecture architecture-right" aria-hidden="true" />
+          <div className="halo" aria-hidden="true" />
+          <div className="portrait-frame">
+            {portraitLayers.map((portrait, index) => (
+              <img
+                alt={`Tibo as ${portrait.name}`}
+                className={`portrait ${
+                  index === 0 ? 'portrait-low' : index === stages.length - 1 ? 'portrait-high' : 'portrait-mid'
+                }`}
+                key={portrait.name}
+                src={portrait.image}
+                style={{ opacity: portrait.opacity }}
+              />
+            ))}
+            <div className="frame-lines" aria-hidden="true" />
+          </div>
+          <div className="readout">
             <div>
-              <p className="ledger-kicker">TABULARIUM RESETORUM · ROUND {roman(ledger.currentRound)}</p>
-              <h2 id="petition-ledger-title">Petition &amp; Reset Ledger</h2>
-              <p>The public record of every plea — and every mercy granted.</p>
+              <b>{stage.latin}</b>
+              <strong>{stage.name}</strong>
             </div>
-            <button aria-label="Close petition history" className="ledger-close" onClick={() => setLedgerOpen(false)} type="button">×</button>
-          </header>
-
-          <div className="ledger-stats" aria-label="Petition summary">
-            <div><span>AWAITING RESET</span><strong>{petitionCount.toLocaleString("en-US")}</strong><small>ROUND {roman(ledger.currentRound)} · {ledgerStatus === "live" ? "LIVE" : "SYNCING"}</small></div>
-            <div><span>ALL-TIME PETITIONS</span><strong>{allTimePetitionTotal.toLocaleString("en-US")}</strong><small>ACROSS ALL ROUNDS</small></div>
-            <div><span>RESETS GRANTED</span><strong>{resetHistory.length}</strong><small>{latestReset ? `LAST RESET ${lastResetElapsed}` : "BY IMPERIAL DECREE"}</small></div>
-          </div>
-
-          <div className="ledger-calendar">
-            <div className="calendar-scroll">
-              <div className="calendar-months" aria-hidden="true">
-                {petitionMonths.slice(1).map((month, index) => <span key={`${month.label}-${index}`} style={{ gridColumn: `${month.column} / span 4` }}>{month.label}</span>)}
-              </div>
-              <div className="calendar-layout">
-                <div className="weekday-labels" aria-hidden="true"><span>MON</span><span>WED</span><span>FRI</span></div>
-                <div className="contribution-grid" role="grid" aria-label="Daily reset petitions over the past 52 weeks">
-                  {petitionHistory.map((day) => (
-                    <button
-                      aria-label={`${formatLedgerDate(day.date)}: ${day.count.toLocaleString("en-US")} petitions${day.reset ? `, Reset ${day.reset.round} granted` : ""}`}
-                      className={`petition-day level-${day.level}${day.reset ? " is-reset-day" : ""}${selectedDate === day.date ? " is-selected" : ""}`}
-                      disabled={day.isFuture}
-                      key={day.date}
-                      onClick={() => setSelectedDate(day.date)}
-                      role="gridcell"
-                      title={`${formatLedgerDate(day.date)} · ${day.count.toLocaleString("en-US")} petitions${day.reset ? ` · RESET ${day.reset.round} GRANTED` : ""}`}
-                      type="button"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="calendar-legend">
-              <span>LESS</span><i className="level-0" /><i className="level-1" /><i className="level-2" /><i className="level-3" /><i className="level-4" /><span>MORE</span><b><i /> RESET GRANTED</b>
-            </div>
-          </div>
-
-          <div className="ledger-detail">
-            <div>
-              <span>SELECTED DATE</span>
-              <strong>{formatLedgerDate(selectedDay.date)}</strong>
-            </div>
-            <div>
-              <span>PETITIONS</span>
-              <strong>{selectedDay.count.toLocaleString("en-US")}</strong>
-            </div>
-            <div className={selectedDay.reset ? "decree granted" : "decree"}>
-              <span>IMPERIAL DECREE</span>
-              <strong>{selectedDay.reset ? `RESET ${selectedDay.reset.round} GRANTED` : "THE PLEAS CONTINUE"}</strong>
-            </div>
-          </div>
-
-          <div className="reset-records">
-            <div className="record-heading"><span>GRANTED RESETS</span><span>THE ARCHIVE REMEMBERS</span></div>
-            <ol>
-              {[...resetHistory].reverse().map((event) => (
-                <li key={event.resetAt}>
-                  <button onClick={() => setSelectedDate(event.date)} type="button">
-                    <b>{event.round}</b><span><strong>RESET GRANTED</strong><small>{formatLedgerDate(event.date)}</small></span><em>{event.petitions.toLocaleString("en-US")} pleas answered</em>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            {resetHistory.length === 0 && <p className="empty-ledger-record">NO IMPERIAL RESET HAS YET BEEN GRANTED.</p>}
           </div>
         </section>
-      </div>
-    )}
+
+        <section className="calibrator" aria-label="Codex intensity control">
+          <div className="calibrator-heading">
+            <span>INTENSITY</span>
+            <span>{isResetting ? resetStatus : ''}</span>
+          </div>
+          <div className="range-shell">
+            <div
+              className="imperial-switch"
+              style={{
+                '--slider-position': progress,
+                '--material-hi': finish.hi,
+                '--material-mid': finish.mid,
+                '--material-deep': finish.deep,
+                '--rail-base': finish.rail,
+                '--rail-shadow': finish.shadow,
+              } as React.CSSProperties}
+            >
+              <div className="indicator left" aria-hidden="true" />
+              <div className="indicator right" aria-hidden="true" />
+              <LaurelCrown className="rail-laurel" kind="rail" />
+              <div className="rail-particles" aria-hidden="true">
+                {sparks.map((spark, index) => (
+                  <i
+                    className={spark.lane}
+                    key={`${spark.left}-${index}`}
+                    style={{
+                      left: spark.left,
+                      width: spark.size,
+                      height: spark.size,
+                      animationDelay: spark.delay,
+                      '--drift': spark.drift,
+                      '--lift': spark.lift,
+                      '--spark-duration': spark.duration,
+                    } as React.CSSProperties}
+                  />
+                ))}
+              </div>
+              <input
+                aria-label="Codex intensity"
+                aria-valuetext={signed(strength)}
+                className="strength-range"
+                disabled={isResetting || isSliderAnimating}
+                max="15"
+                min="-15"
+                onChange={handleSliderChange}
+                onPointerDown={handleSliderPointerDown}
+                step="1"
+                type="range"
+                value={strength}
+              />
+              <div className="slider-button" aria-hidden="true" />
+            </div>
+            <button
+              aria-label="Request a theatrical visual reset"
+              className={`reset-button reset-stage-${stageIndex}${isResetting ? ' is-resetting' : ''}`}
+              disabled={isResetting || isSliderAnimating}
+              onClick={requestReset}
+              style={{ '--surface-top': finish.hi, '--surface-bottom': finish.mid } as React.CSSProperties}
+              type="button"
+            >
+              <span className="reset-button-outer">
+                <span className="reset-button-inner">
+                  <span>Reset</span>
+                </span>
+              </span>
+            </button>
+          </div>
+        </section>
+        <footer>
+          <span>IV · VI — ASCENSION PROTOCOL</span>
+          <span>NO CROWN WITHOUT THE BUILD</span>
+        </footer>
+      </main>
+      {ledgerOpen && (
+        <div
+          className="ledger-backdrop"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setLedgerOpen(false);
+          }}
+        >
+          <section
+            aria-labelledby="petition-ledger-title"
+            aria-modal="true"
+            className="petition-ledger"
+            id="petition-ledger"
+            role="dialog"
+          >
+            <header className="ledger-header">
+              <div>
+                <p className="ledger-kicker">TABULARIUM RESETORUM · ROUND {roman(ledger.currentRound)}</p>
+                <h2 id="petition-ledger-title">Petition &amp; Reset Ledger</h2>
+                <p>The public record of every plea — and every mercy granted.</p>
+              </div>
+              <button
+                aria-label="Close petition history"
+                className="ledger-close"
+                onClick={() => setLedgerOpen(false)}
+                type="button"
+              >
+                ×
+              </button>
+            </header>
+
+            <div className="ledger-stats" aria-label="Petition summary">
+              <div>
+                <span>AWAITING RESET</span>
+                <strong>{petitionCount.toLocaleString('en-US')}</strong>
+                <small>ROUND {roman(ledger.currentRound)} · {ledgerStatus === 'live' ? 'LIVE' : 'SYNCING'}</small>
+              </div>
+              <div>
+                <span>ALL-TIME PETITIONS</span>
+                <strong>{allTimePetitionTotal.toLocaleString('en-US')}</strong>
+                <small>ACROSS ALL ROUNDS</small>
+              </div>
+              <div>
+                <span>RESETS GRANTED</span>
+                <strong>{resetHistory.length}</strong>
+                <small>{latestReset ? `LAST RESET ${lastResetElapsed}` : 'BY IMPERIAL DECREE'}</small>
+              </div>
+            </div>
+
+            <div className="ledger-calendar">
+              <div className="calendar-scroll">
+                <div className="calendar-months" aria-hidden="true">
+                  {petitionMonths.slice(1).map((month, index) => (
+                    <span key={`${month.label}-${index}`} style={{ gridColumn: `${month.column} / span 4` }}>
+                      {month.label}
+                    </span>
+                  ))}
+                </div>
+                <div className="calendar-layout">
+                  <div className="weekday-labels" aria-hidden="true">
+                    <span>MON</span>
+                    <span>WED</span>
+                    <span>FRI</span>
+                  </div>
+                  <div
+                    className="contribution-grid"
+                    role="grid"
+                    aria-label="Daily reset petitions over the past 52 weeks"
+                  >
+                    {petitionHistory.map((day) => (
+                      <button
+                        aria-label={`${formatLedgerDate(day.date)}: ${day.count.toLocaleString('en-US')} petitions${
+                          day.reset ? `, Reset ${day.reset.round} granted` : ''
+                        }`}
+                        className={`petition-day level-${day.level}${day.reset ? ' is-reset-day' : ''}${
+                          selectedDate === day.date ? ' is-selected' : ''
+                        }`}
+                        disabled={day.isFuture}
+                        key={day.date}
+                        onClick={() => setSelectedDate(day.date)}
+                        role="gridcell"
+                        title={`${formatLedgerDate(day.date)} · ${day.count.toLocaleString('en-US')} petitions${
+                          day.reset ? ` · RESET ${day.reset.round} GRANTED` : ''
+                        }`}
+                        type="button"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="calendar-legend">
+                <span>LESS</span>
+                <i className="level-0" />
+                <i className="level-1" />
+                <i className="level-2" />
+                <i className="level-3" />
+                <i className="level-4" />
+                <span>MORE</span>
+                <b>
+                  <i /> RESET GRANTED
+                </b>
+              </div>
+            </div>
+
+            <div className="ledger-detail">
+              <div>
+                <span>SELECTED DATE</span>
+                <strong>{formatLedgerDate(selectedDay.date)}</strong>
+              </div>
+              <div>
+                <span>PETITIONS</span>
+                <strong>{selectedDay.count.toLocaleString('en-US')}</strong>
+              </div>
+              <div className={selectedDay.reset ? 'decree granted' : 'decree'}>
+                <span>IMPERIAL DECREE</span>
+                <strong>{selectedDay.reset ? `RESET ${selectedDay.reset.round} GRANTED` : 'THE PLEAS CONTINUE'}</strong>
+              </div>
+            </div>
+
+            <div className="reset-records">
+              <div className="record-heading">
+                <span>GRANTED RESETS</span>
+                <span>THE ARCHIVE REMEMBERS</span>
+              </div>
+              <ol>
+                {[...resetHistory].reverse().map((event) => (
+                  <li key={event.resetAt}>
+                    <button onClick={() => setSelectedDate(event.date)} type="button">
+                      <b>{event.round}</b>
+                      <span>
+                        <strong>RESET GRANTED</strong>
+                        <small>{formatLedgerDate(event.date)}</small>
+                      </span>
+                      <em>{event.petitions.toLocaleString('en-US')} pleas answered</em>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              {resetHistory.length === 0 && (
+                <p className="empty-ledger-record">NO IMPERIAL RESET HAS YET BEEN GRANTED.</p>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </>
   );
 }

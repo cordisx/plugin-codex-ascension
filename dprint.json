@@ -1,0 +1,40 @@
+{
+  "indentWidth": 2,
+  "newLineKind": "lf",
+  "typescript": {
+    "quoteStyle": "preferSingle",
+    "jsx.quoteStyle": "preferDouble",
+    "semiColons": "always",
+    "module.sortImportDeclarations": "maintain",
+    "module.sortExportDeclarations": "maintain"
+  },
+  "markdown": {
+    "textWrap": "maintain"
+  },
+  "includes": [
+    "**/*.{ts,tsx,js,jsx,mjs,cjs,json,md}"
+  ],
+  "excludes": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.cache/**",
+    "**/package-lock.json",
+    ".next/**",
+    ".vinext/**",
+    "out/**",
+    ".wrangler/**",
+    "outputs/**",
+    "work/**",
+    "next-env.d.ts",
+    "plugin/src/assets/identity/generated.ts",
+    "plugin/src/assets/portraits/generated.ts",
+    "drizzle/meta/*.json"
+  ],
+  "plugins": [
+    "npm:@dprint/typescript@0.96.1",
+    "npm:@dprint/json@0.23.0",
+    "npm:@dprint/markdown@0.23.3"
+  ]
+}

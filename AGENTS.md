@@ -1,5 +1,6 @@
 # Repository Guide
 
+- Follow the [organization file-size rule](https://github.com/cordisx/cordisxmono/blob/main/.agents/rules/file-size.md) for formatting and responsibility-based splitting guidance.
 - Use the [repository README](README.md) to select the CordisX plugin or Reset
   petition site before changing files or running commands.
 - `plugin/` owns the plugin and its [usage and development documentation](plugin/README.md).

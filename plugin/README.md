@@ -21,11 +21,11 @@ The optional `session.backdrop` contribution remains a legacy structured
 CordisX renders the plugin's structured configuration form. Each option is
 enabled by default and can be changed independently:
 
-| Option | Effect when disabled |
-| --- | --- |
+| Option                   | Effect when disabled                                     |
+| ------------------------ | -------------------------------------------------------- |
 | Replace reasoning slider | Leaves the native reasoning-intensity control unchanged. |
-| Show backdrop portrait | Does not mount portrait images in the session backdrop. |
-| Enable backdrop effects | Does not mount the glow or architectural effect layers. |
+| Show backdrop portrait   | Does not mount portrait images in the session backdrop.  |
+| Enable backdrop effects  | Does not mount the glow or architectural effect layers.  |
 
 If both backdrop options are disabled, the plugin does not register a
 `session.backdrop` contribution. Saved changes apply with a plugin restart.

@@ -1,10 +1,10 @@
-import { env } from "cloudflare:workers";
+import { env } from 'cloudflare:workers';
 
 export type LedgerSnapshot = {
   currentCount: number;
   currentRound: number;
-  days: Array<{ date: string; count: number }>;
-  resets: Array<{ date: string; resetAt: string; petitions: number; round: string }>;
+  days: Array<{ date: string; count: number; }>;
+  resets: Array<{ date: string; resetAt: string; petitions: number; round: string; }>;
 };
 
 type LedgerStateRow = {
@@ -26,15 +26,29 @@ type ResetEventRow = {
 let schemaPromise: Promise<void> | undefined;
 
 function database() {
-  const binding = (env as unknown as { DB?: D1Database }).DB;
-  if (!binding) throw new Error("The petition ledger database is unavailable.");
+  const binding = (env as unknown as { DB?: D1Database; }).DB;
+  if (!binding) throw new Error('The petition ledger database is unavailable.');
   return binding;
 }
 
 function roman(value: number) {
-  const numerals: Array<[number, string]> = [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  const numerals: Array<[number, string]> = [
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
+  ];
   let remaining = Math.max(1, Math.floor(value));
-  let result = "";
+  let result = '';
   for (const [amount, numeral] of numerals) {
     while (remaining >= amount) {
       result += numeral;
@@ -66,9 +80,11 @@ export async function ensureLedgerSchema() {
         reset_at TEXT NOT NULL,
         petition_count INTEGER NOT NULL CHECK (petition_count >= 0)
       )`),
-      db.prepare("CREATE INDEX IF NOT EXISTS idx_reset_events_reset_at ON reset_events (reset_at)"),
-      db.prepare("INSERT OR IGNORE INTO ledger_state (id, current_round, current_count, started_at, updated_at) VALUES (1, 1, 0, ?, ?)").bind(now, now),
-      db.prepare("PRAGMA optimize"),
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_reset_events_reset_at ON reset_events (reset_at)'),
+      db.prepare(
+        'INSERT OR IGNORE INTO ledger_state (id, current_round, current_count, started_at, updated_at) VALUES (1, 1, 0, ?, ?)',
+      ).bind(now, now),
+      db.prepare('PRAGMA optimize'),
     ]).then(() => undefined).catch((error) => {
       schemaPromise = undefined;
       throw error;
@@ -84,9 +100,9 @@ export async function readLedger(): Promise<LedgerSnapshot> {
   earliest.setUTCDate(earliest.getUTCDate() - 371);
   const earliestDay = earliest.toISOString().slice(0, 10);
   const [stateResult, dayResult, resetResult] = await db.batch([
-    db.prepare("SELECT current_round, current_count FROM ledger_state WHERE id = 1"),
-    db.prepare("SELECT day, count FROM petition_days WHERE day >= ? ORDER BY day ASC").bind(earliestDay),
-    db.prepare("SELECT round, reset_at, petition_count FROM reset_events ORDER BY reset_at ASC"),
+    db.prepare('SELECT current_round, current_count FROM ledger_state WHERE id = 1'),
+    db.prepare('SELECT day, count FROM petition_days WHERE day >= ? ORDER BY day ASC').bind(earliestDay),
+    db.prepare('SELECT round, reset_at, petition_count FROM reset_events ORDER BY reset_at ASC'),
   ]);
   const state = stateResult.results[0] as unknown as LedgerStateRow | undefined;
   const days = dayResult.results as unknown as PetitionDayRow[];
@@ -111,8 +127,9 @@ export async function recordPetition() {
   const now = new Date().toISOString();
   const day = now.slice(0, 10);
   await db.batch([
-    db.prepare("INSERT INTO petition_days (day, count) VALUES (?, 1) ON CONFLICT(day) DO UPDATE SET count = count + 1").bind(day),
-    db.prepare("UPDATE ledger_state SET current_count = current_count + 1, updated_at = ? WHERE id = 1").bind(now),
+    db.prepare('INSERT INTO petition_days (day, count) VALUES (?, 1) ON CONFLICT(day) DO UPDATE SET count = count + 1')
+      .bind(day),
+    db.prepare('UPDATE ledger_state SET current_count = current_count + 1, updated_at = ? WHERE id = 1').bind(now),
   ]);
   return readLedger();
 }
@@ -121,7 +138,9 @@ export async function grantReset() {
   await ensureLedgerSchema();
   const db = database();
   const now = new Date().toISOString();
-  const state = await db.prepare("SELECT current_count FROM ledger_state WHERE id = 1").first<{ current_count: number }>();
+  const state = await db.prepare('SELECT current_count FROM ledger_state WHERE id = 1').first<
+    { current_count: number; }
+  >();
   if (!state || Number(state.current_count) < 1) return readLedger();
   await db.batch([
     db.prepare(`INSERT INTO reset_events (round, reset_at, petition_count)
@@ -134,7 +153,7 @@ export async function grantReset() {
 }
 
 export function isAuthorizedReset(request: Request) {
-  const configured = (env as unknown as { RESET_ADMIN_TOKEN?: string }).RESET_ADMIN_TOKEN;
-  const provided = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const configured = (env as unknown as { RESET_ADMIN_TOKEN?: string; }).RESET_ADMIN_TOKEN;
+  const provided = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
   return Boolean(configured && provided && configured === provided);
 }

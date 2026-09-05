@@ -1,5 +1,9 @@
 <p align="center">
-  <img alt="OpenAI Imperium Ouroboros coin" src="./public/favicon.png" width="160">
+  <img
+    alt="OpenAI Imperium Ouroboros coin"
+    src="./public/favicon.png"
+    width="160"
+  >
 </p>
 
 <p align="center">
@@ -25,10 +29,10 @@
 OpenAI Imperium contains a CordisX reasoning-intensity presentation plugin and
 a Reset petition site. Each component has its own runtime and maintenance entry:
 
-| Component | Usage and maintenance |
-| --- | --- |
-| CordisX plugin (`plugin/`) | [Plugin README](plugin/README.md): configuration, Host compatibility, and development commands |
-| Reset petition site (repository root) | [Site README](app/README.md): experience, local development, and persistent ledger |
+| Component                             | Usage and maintenance                                                                          |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| CordisX plugin (`plugin/`)            | [Plugin README](plugin/README.md): configuration, Host compatibility, and development commands |
+| Reset petition site (repository root) | [Site README](app/README.md): experience, local development, and persistent ledger             |
 
 ![OpenAI Imperium — Veni. Vidi. Reset.](./public/og.png)
 

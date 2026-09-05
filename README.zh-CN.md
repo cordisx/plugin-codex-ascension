@@ -25,10 +25,10 @@
 OpenAI Imperium 在同一仓库中提供 CordisX 思考强度视觉插件与 Reset 请愿站。
 两个组件分别维护运行入口：
 
-| 组件 | 使用与维护说明 |
-| --- | --- |
-| CordisX 插件（`plugin/`） | [插件 README](plugin/README.md#中文)：配置、Host 兼容条件与开发命令 |
-| Reset 请愿站（仓库根目录） | [请愿站 README](app/README.zh-CN.md)：体验介绍、本地运行与持久账本 |
+| 组件                       | 使用与维护说明                                                      |
+| -------------------------- | ------------------------------------------------------------------- |
+| CordisX 插件（`plugin/`）  | [插件 README](plugin/README.md#中文)：配置、Host 兼容条件与开发命令 |
+| Reset 请愿站（仓库根目录） | [请愿站 README](app/README.zh-CN.md)：体验介绍、本地运行与持久账本  |
 
 ![OpenAI Imperium——我来，我见，我 Reset。](./public/og.png)
 

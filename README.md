@@ -16,85 +16,42 @@
 <p align="center"><strong>Veni. Vidi. Reset.</strong></p>
 
 <p align="center">
-  <a href="https://openai-imperium-reset.yijie4188.chatgpt.site/"><strong>Join the reset petition</strong></a>
+  <a href="./plugin/README.md"><strong>CordisX plugin</strong></a>
+  · <a href="https://openai-imperium-reset.yijie4188.chatgpt.site/"><strong>Join the reset petition</strong></a>
   · <a href="https://github.com/cordisx/plugin-codex-ascension">Source</a>
   · <a href="https://github.com/cordisx/plugin-codex-ascension/issues">Feedback</a>
 </p>
 
-OpenAI Imperium is an unofficial theatrical petition for the next Codex reset.
-Move the ascension control through six increasingly imperial states, add your
-plea to the live count, and inspect the public record of petitions and resets.
+OpenAI Imperium contains a CordisX reasoning-intensity presentation plugin and
+a Reset petition site. Each component has its own runtime and maintenance entry:
+
+| Component | Usage and maintenance |
+| --- | --- |
+| CordisX plugin (`plugin/`) | [Plugin README](plugin/README.md): configuration, Host compatibility, and development commands |
+| Reset petition site (repository root) | [Site README](app/README.md): experience, local development, and persistent ledger |
 
 ![OpenAI Imperium — Veni. Vidi. Reset.](./public/og.png)
 
-## From exhausted scribe to Codex Maximus
-
-The experience turns a plain reasoning-intensity control into a miniature
-ascension ceremony. Portrait, material, type, background, particles, and
-laurel effects evolve together as the control moves toward its final state.
-
-The Reset button advances the control one order at a time and records a real
-petition. When a reset is granted, the protected administrative action closes
-the round, preserves its result in the ledger, and begins a new count.
-
-## What is available
-
-- Six coordinated portrait and interface states.
-- A tactile, keyboard-accessible intensity control and Reset button.
-- Smooth material progression from plastic through bronze and silver to gold.
-- Algorithmic particles and laurel motion at the higher orders.
-- A persistent Cloudflare D1 petition ledger.
-- A GitHub-style calendar of petition history and granted resets.
-- A bearer-token-protected administrative reset endpoint.
-- A public, responsive Site with Open Graph and favicon assets.
-
-## Run locally
-
-Use Node.js 22.13 or newer:
-
-```bash
-npm install
-npm run dev
-```
-
-Create a production build with:
-
-```bash
-npm run build
-```
-
-The persistent ledger uses the `DB` D1 binding declared in
-`.openai/hosting.json`. A production reset also requires a hosted
-`RESET_ADMIN_TOKEN` secret. Never commit that value.
-
 ## CordisX plugin
 
-The repository also contains the installable reasoning-intensity presentation
-under [`plugin/`](./plugin). It turns the native CordisX reasoning range from
-plastic through bronze, steel, silver, and gold while leaving values, events,
-keyboard interaction, accessibility, and persistence under Host control.
-
-```bash
-cd plugin
-npm install
-npm run check
-npm run dev
-```
+The plugin contributes an ascension presentation for reasoning intensity and an
+optional session backdrop. CordisX Host owns native interaction and rendering.
+[`plugin/README.md`](plugin/README.md) is the source for plugin usage,
+configuration, and development instructions.
 
 ### Plugin configuration
 
-CordisX renders these settings from the plugin's structured schema. All three
-options default to enabled and apply after the plugin restarts:
+See the [plugin configuration reference](plugin/README.md#configuration).
 
-| Option | What it controls |
-| --- | --- |
-| Replace reasoning slider | Applies the Imperium presentation to the native reasoning-intensity control. |
-| Show backdrop portrait | Shows the stage portrait in the lower-right session background. |
-| Enable backdrop effects | Shows the stage glow and architectural motion independently of the portrait. |
+## Reset petition site
 
-The switches are independent. Disabling both backdrop options removes the
-`session.backdrop` contribution entirely; disabling the slider option leaves
-the native CordisX control unchanged.
+The site offers a six-stage visual experience, petition counts, and public
+history. Its [README](app/README.md) owns feature, runtime, and ledger details.
+
+## Run locally
+
+Choose the [plugin development instructions](plugin/README.md#development) or
+[petition site instructions](app/README.md#run-locally) for the component you need.
 
 ## License
 

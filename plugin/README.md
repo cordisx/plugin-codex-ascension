@@ -32,6 +32,10 @@ If both backdrop options are disabled, the plugin does not register a
 
 ## Development
 
+Run the following commands from `plugin/`. Its
+[`package.json`](package.json) defines the Node.js requirement and checks;
+the repository-root package runs the separate petition site.
+
 Requires a published CordisX prerelease containing
 [cordisx/cordisx#187](https://github.com/cordisx/cordisx/pull/187).
 

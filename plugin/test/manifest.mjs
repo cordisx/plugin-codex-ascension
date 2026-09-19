@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import {
   apply,
   backdrop,
@@ -17,7 +19,14 @@ test('exports a capability-free structured CordisX plugin', () => {
   assert.equal(manifest.id, 'codex-ascension');
   assert.deepEqual(manifest.capabilities, []);
   assert.equal(icon.mediaType, 'image/png');
-  assert.ok(icon.data.length > 50_000);
+  const iconBytes = Buffer.from(icon.data, 'base64');
+  assert.deepEqual(iconBytes, readFileSync(new URL('../src/assets/identity/ascension.png', import.meta.url)));
+  assert.equal(
+    createHash('sha256').update(iconBytes).digest('hex'),
+    '2a037ea870d249272dc3ff7de69fc178e06fa89dc16dbfe8bebfc5bdc966626c',
+  );
+  assert.equal(iconBytes.readUInt32BE(16), 256);
+  assert.equal(iconBytes.readUInt32BE(20), 256);
   assert.deepEqual(inject, ['i18n', 'slots']);
   assert.equal(configApplies, 'plugin-restart');
   assert.deepEqual(Config({}), {

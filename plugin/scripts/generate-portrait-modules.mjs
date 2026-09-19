@@ -14,9 +14,9 @@ await writeFile(
 );
 
 const identityRoot = fileURLToPath(new URL('../src/assets/identity/', import.meta.url));
-const iconData = await readFile(fileURLToPath(new URL('../../public/apple-touch-icon.png', import.meta.url)), 'base64');
+const iconData = await readFile(`${identityRoot}ascension.png`, 'base64');
 await mkdir(identityRoot, { recursive: true });
 await writeFile(
   `${identityRoot}generated.ts`,
-  `// Generated from the approved site icon by scripts/generate-portrait-modules.mjs.\nexport const ascensionIcon: string = '${iconData}'\n`,
+  `// Generated from the plugin-owned brand icon by scripts/generate-portrait-modules.mjs.\nexport const ascensionIcon: string = '${iconData}'\n`,
 );

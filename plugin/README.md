@@ -46,6 +46,19 @@ npm run dev:dry-run
 npm run dev
 ```
 
+## Brand icon and source distribution
+
+The plugin owns its approved 256×256 brand PNG at
+[`src/assets/identity/ascension.png`](src/assets/identity/ascension.png). The build
+embeds these exact bytes in the public module `icon` export as
+`{ mediaType: 'image/png', data }`, so Host plugin lists can consume the icon
+without fetching a site asset. The petition site icons remain independent.
+
+This private package is distributed from repository source; merging the PNG and
+its generated module to `main` updates that source distribution. No npm release
+or version tag is required for the icon change. `npm run check` verifies the
+built export against the selected PNG hash and dimensions.
+
 ## 中文
 
 这是 OpenAI Imperium 的 CordisX 思考强度主题插件。插件声明塑料白、青铜、

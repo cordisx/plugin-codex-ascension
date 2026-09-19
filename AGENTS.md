@@ -12,6 +12,8 @@
 - Choose validation from the affected component's `package.json`. For a
   documentation-only change, check the diff and local links; report those
   checks separately from build, runtime, or live-app verification.
+- Plugin development, package inspection, contribution, and GitHub prerelease
+  steps are maintained in [`plugin/DEVELOPMENT.md`](plugin/DEVELOPMENT.md).
 
 ## Shared quality configuration
 

@@ -29,10 +29,10 @@
 OpenAI Imperium contains a CordisX reasoning-intensity presentation plugin and
 a Reset petition site. Each component has its own runtime and maintenance entry:
 
-| Component                             | Usage and maintenance                                                                          |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| CordisX plugin (`plugin/`)            | [Plugin README](plugin/README.md): configuration, Host compatibility, and development commands |
-| Reset petition site (repository root) | [Site README](app/README.md): experience, local development, and persistent ledger             |
+| Component                             | Usage and maintenance                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------- |
+| CordisX plugin (`plugin/`)            | [Plugin README](plugin/README.md): installation, usage, configuration, and compatibility |
+| Reset petition site (repository root) | [Site README](app/README.md): experience, local development, and persistent ledger       |
 
 ![OpenAI Imperium — Veni. Vidi. Reset.](./public/og.png)
 
@@ -40,8 +40,8 @@ a Reset petition site. Each component has its own runtime and maintenance entry:
 
 The plugin contributes an ascension presentation for reasoning intensity and an
 optional session backdrop. CordisX Host owns native interaction and rendering.
-[`plugin/README.md`](plugin/README.md) is the source for plugin usage,
-configuration, and development instructions.
+[`plugin/README.md`](plugin/README.md) is the source for plugin installation,
+usage, configuration, and compatibility.
 
 ### Plugin configuration
 
@@ -54,8 +54,8 @@ history. Its [README](app/README.md) owns feature, runtime, and ledger details.
 
 ## Run locally
 
-Choose the [plugin development instructions](plugin/README.md#development) or
-[petition site instructions](app/README.md#run-locally) for the component you need.
+Choose the [plugin maintainer guide](plugin/DEVELOPMENT.md) or [petition site
+instructions](app/README.md#run-locally) for the component you need.
 
 ## License
 

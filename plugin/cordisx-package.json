@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cordisx/cordisx-protocol/main/schemas/plugin-package.v3.schema.json",
+  "schemaVersion": 3,
+  "id": "codex-ascension",
+  "version": "0.1.1",
+  "entry": "./dist/runtime/module.js",
+  "readme": "./README.md",
+  "canonicalSource": "https://github.com/cordisx/plugin-codex-ascension",
+  "distribution": {
+    "mode": "explicit-local-v1",
+    "signature": "unsupported"
+  },
+  "compatibility": {
+    "runtimeAbi": 1,
+    "protocolSchemas": [
+      "https://raw.githubusercontent.com/cordisx/cordisx-protocol/main/schemas/plugin-manifest.v1.schema.json"
+    ]
+  },
+  "dependencies": [],
+  "runtimeManifest": {
+    "path": "./runtime-manifest.json",
+    "schema": "https://raw.githubusercontent.com/cordisx/cordisx-protocol/main/schemas/plugin-manifest.v1.schema.json",
+    "digest": "sha256:6de4f425b84029aa6e04c27d76232ee92a5a1781460141dca4eb7f5a98e7f226"
+  }
+}

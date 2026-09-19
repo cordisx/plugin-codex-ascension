@@ -16,7 +16,7 @@
 <p align="center"><strong>我来，我见，我 Reset。</strong></p>
 
 <p align="center">
-  <a href="./plugin/README.md#中文"><strong>CordisX 插件</strong></a>
+  <a href="./plugin/README.zh-Hans.md"><strong>CordisX 插件</strong></a>
   · <a href="https://openai-imperium-reset.yijie4188.chatgpt.site/"><strong>加入 Reset 请愿</strong></a>
   · <a href="https://github.com/cordisx/plugin-codex-ascension">源码</a>
   · <a href="https://github.com/cordisx/plugin-codex-ascension/issues">反馈</a>
@@ -27,7 +27,7 @@ OpenAI Imperium 在同一仓库中提供 CordisX 思考强度视觉插件与 Res
 
 | 组件                       | 使用与维护说明                                                      |
 | -------------------------- | ------------------------------------------------------------------- |
-| CordisX 插件（`plugin/`）  | [插件 README](plugin/README.md#中文)：配置、Host 兼容条件与开发命令 |
+| CordisX 插件（`plugin/`）  | [插件 README](plugin/README.zh-Hans.md)：安装、使用、配置与兼容条件 |
 | Reset 请愿站（仓库根目录） | [请愿站 README](app/README.zh-CN.md)：体验介绍、本地运行与持久账本  |
 
 ![OpenAI Imperium——我来，我见，我 Reset。](./public/og.png)
@@ -35,12 +35,12 @@ OpenAI Imperium 在同一仓库中提供 CordisX 思考强度视觉插件与 Res
 ## CordisX 插件
 
 插件提供思考强度的升阶外观及可选会话背景，原生交互和渲染由 CordisX Host
-负责。插件的使用、配置与开发说明统一维护在
-[`plugin/README.md`](plugin/README.md#中文)。
+负责。插件的安装、使用、配置与兼容说明统一维护在
+[`plugin/README.zh-Hans.md`](plugin/README.zh-Hans.md)。
 
 ### 插件配置
 
-请参阅[插件配置说明](plugin/README.md#configuration)。
+请参阅[插件配置说明](plugin/README.zh-Hans.md#配置)。
 
 ## Reset 请愿站
 
@@ -49,7 +49,7 @@ OpenAI Imperium 在同一仓库中提供 CordisX 思考强度视觉插件与 Res
 
 ## 本地运行
 
-根据要运行的组件选择[插件开发说明](plugin/README.md#development)或
+根据要运行的组件选择[插件维护指南](plugin/DEVELOPMENT.md)或
 [请愿站本地运行说明](app/README.zh-CN.md#本地运行)。
 
 ## 许可证与声明

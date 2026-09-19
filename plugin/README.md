@@ -1,77 +1,88 @@
-# @cordisx/codex-ascension
+# Codex Ascension
 
-The CordisX plugin for the OpenAI Imperium reasoning-intensity presentation.
-It contributes five localized semantic stages—plastic, bronze, steel, silver,
-and gold—through `composer.reasoning-intensity`, plus an optional staged
-portrait and effects projection through `session.backdrop`.
+[简体中文](README.zh-Hans.md)
 
-The reasoning presentation declares an explicit `replace` claim named
-`imperium`. It requests only the Host-safe `reasoningIntensity` property,
-`setReasoningIntensity` command, and `reasoningIntensityChanged` event. CordisX
-Host owns authorization, exclusive selection, native fallback, lease state,
-native range discovery, DOM, styling, motion, accessibility, value mapping,
-and cleanup. This plugin contains no selectors, CSS, callbacks, setting
-mutations, native event code, or fabricated lease state.
+Codex Ascension gives CordisX's reasoning-intensity control five theatrical
+stages, from plastic through gold. It can also project a matching portrait and
+ambient effects into the active session background.
 
-The optional `session.backdrop` contribution remains a legacy structured
-`compose` contribution and does not claim controlled-point ownership.
+## Install
+
+Plugin ID: `codex-ascension`. Current release: `0.1.1`.
+
+```sh
+FEED_URL=https://raw.githubusercontent.com/cordisx/marketplace/main/marketplace.json
+npx cordisx@beta source add "$FEED_URL" --yes
+npx cordisx@beta plugin install codex-ascension --source "$FEED_URL" --version 0.1.1
+```
+
+Skip `source add` when that exact feed is already enabled. For another profile,
+add the same `--profile <profile>` argument to both commands. `--source` selects
+an already configured and enabled source; it does not register one. `--yes`
+confirms the source change only and does not approve plugin permissions. A
+discovery source is not a trust root.
+
+The install command becomes available after the Marketplace v3 entry lists the
+verified `0.1.1` artifact. Until then, download the archive and `SHA256SUMS`
+from the
+[GitHub prerelease](https://github.com/cordisx/plugin-codex-ascension/releases/tag/v0.1.1).
+
+## Use
+
+Open a Codex session in CordisX and choose a reasoning-intensity value. The
+native control keeps its normal behavior while the selected value is presented
+as one of five Ascension stages:
+
+| Reasoning stage | Ascension presentation |
+| --------------- | ---------------------- |
+| Lowest          | Promptly Bankrupt      |
+| Low             | Bronze Builder         |
+| Medium          | Tool-Forged Tribune    |
+| High            | Silver Context         |
+| Highest         | Codex Maximus          |
+
+The session backdrop follows the same stage when its portrait or effects are
+enabled.
 
 ## Configuration
 
-CordisX renders the plugin's structured configuration form. Each option is
-enabled by default and can be changed independently:
+CordisX renders three settings, all enabled by default:
 
-| Option                   | Effect when disabled                                     |
+| Setting                  | Effect when disabled                                     |
 | ------------------------ | -------------------------------------------------------- |
 | Replace reasoning slider | Leaves the native reasoning-intensity control unchanged. |
-| Show backdrop portrait   | Does not mount portrait images in the session backdrop.  |
-| Enable backdrop effects  | Does not mount the glow or architectural effect layers.  |
+| Show backdrop portrait   | Hides the staged portrait.                               |
+| Enable backdrop effects  | Hides the glow and architectural effects.                |
 
-If both backdrop options are disabled, the plugin does not register a
-`session.backdrop` contribution. Saved changes apply with a plugin restart.
+Saved changes apply after the plugin restarts. If both backdrop settings are
+disabled, the plugin does not register a session backdrop.
 
-## Development
+## Permissions and limits
 
-Run the following commands from `plugin/`. Its
-[`package.json`](package.json) defines the Node.js requirement and checks;
-the repository-root package runs the separate petition site.
+Codex Ascension requests no CordisX capabilities. The Host owns authorization,
+the reasoning value, native control behavior, rendering, accessibility, and
+cleanup. The plugin changes presentation only; it does not change model
+reasoning policy or submit settings on the user's behalf.
 
-Requires a published CordisX prerelease containing
-[cordisx/cordisx#187](https://github.com/cordisx/cordisx/pull/187).
+The reasoning-control replacement requires a CordisX Host that supports the
+controlled `composer.reasoning-intensity` contribution. The session backdrop
+uses the legacy structured `session.backdrop` contribution.
 
-```bash
-npm install
-npm run check
-npm run dev:dry-run
-npm run dev
-```
+## Troubleshooting
 
-## Brand icon and source distribution
+- **Version `0.1.1` is not found:** confirm the Marketplace entry lists the
+  release artifact. `--source` cannot add or repair a feed.
+- **The native slider is unchanged:** enable **Replace reasoning slider**, save,
+  and restart the plugin.
+- **The backdrop is missing:** enable at least one backdrop setting and restart
+  the plugin.
 
-The plugin owns its approved 256×256 brand PNG at
-[`src/assets/identity/ascension.png`](src/assets/identity/ascension.png). The build
-embeds these exact bytes in the public module `icon` export as
-`{ mediaType: 'image/png', data }`, so Host plugin lists can consume the icon
-without fetching a site asset. The petition site icons remain independent.
+## License
 
-This private package is distributed from repository source; merging the PNG and
-its generated module to `main` updates that source distribution. No npm release
-or version tag is required for the icon change. `npm run check` verifies the
-built export against the selected PNG hash and dimensions.
-
-## 中文
-
-这是 OpenAI Imperium 的 CordisX 思考强度主题插件。插件声明塑料白、青铜、
-钢、银、金五个语义档位，并可选提供会话背景人像与特效。思考强度外观通过
-名为 `imperium` 的显式 `replace` claim 接入，只请求 Host 安全投影的
-`reasoningIntensity` 属性、`setReasoningIntensity` 命令和
-`reasoningIntensityChanged` 事件；授权、排他选择、原生回退、lease 状态、
-原生滑块定位、DOM、样式、动画、可访问性、数值映射和卸载清理由 CordisX Host
-统一负责。插件不包含 selector、CSS、callback、原生事件代码或伪造的 lease
-状态。`session.backdrop` 仍是 legacy structured `compose` contribution，不声明
-受控点所有权。
-
-CordisX 会从插件的结构化 Schema 渲染三个默认开启、可独立组合的配置项：
-「替换思考强度 Slider」「显示背景人像」「启用背景特效」。关闭某项后 Host
-不会挂载对应视觉层；两项背景配置都关闭时，插件不会注册 `session.backdrop`。
-保存配置后通过插件重启生效。
+The source code is available under the repository's
+[MIT License](https://github.com/cordisx/plugin-codex-ascension/blob/main/LICENSE).
+Portrait and brand-asset terms are described in the repository's
+[asset notice](https://github.com/cordisx/plugin-codex-ascension/blob/main/ASSETS-LICENSE.md).
+Maintainer setup, checks, packaging, and release instructions are in the source
+repository's
+[maintainer guide](https://github.com/cordisx/plugin-codex-ascension/blob/main/plugin/DEVELOPMENT.md).

@@ -1,24 +1,33 @@
 {
   "name": "@cordisx/codex-ascension",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "license": "MIT",
   "description": "OpenAI Imperium reasoning-intensity presentation for CordisX",
   "type": "module",
-  "main": "./dist/codex-ascension.js",
+  "main": "./dist/runtime/module.js",
   "types": "./dist/codex-ascension.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "README.zh-Hans.md",
+    "cordisx-package.json",
+    "runtime-manifest.json"
+  ],
   "scripts": {
-    "build": "node scripts/generate-portrait-modules.mjs && tsc -p tsconfig.json",
-    "check": "npm run typecheck && npm run build && npm test",
+    "build": "node scripts/clean-dist.mjs && node scripts/generate-portrait-modules.mjs && tsc -p tsconfig.json && node scripts/build-runtime-bundle.mjs",
+    "check": "npm run typecheck && npm run build && npm test && npm run pack:check",
     "dev": "cordisx dev ./src/codex-ascension.ts",
     "dev:dry-run": "cordisx dev ./src/codex-ascension.ts --dry-run",
-    "test": "node --test test/manifest.mjs",
+    "pack:check": "node scripts/check-package.mjs",
+    "test": "node --test test/*.mjs",
     "typecheck": "node scripts/generate-portrait-modules.mjs && tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
     "@deepseek-ai/schemastery": "^3.18.1",
     "cordisx": "0.1.0-beta.1",
+    "esbuild": "0.28.2",
     "typescript": "^5.9.2"
   },
   "engines": {
